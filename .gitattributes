@@ -1,0 +1,10 @@
+* text=auto !eol
+
+*.ts text
+*.js text
+*.css text
+*.json text
+
+*.png binary
+*.ico binary
+

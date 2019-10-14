@@ -1,0 +1,22 @@
+language: node_js
+dist: bionic
+node_js:
+  - node
+addons:
+  chrome: stable
+install:
+  - npm install
+script:
+  - npm run lint
+  - npm test
+  - npm run build
+before_deploy:
+  - rm .gitignore
+deploy:
+  local_dir: dist
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  on:
+    branch: master
