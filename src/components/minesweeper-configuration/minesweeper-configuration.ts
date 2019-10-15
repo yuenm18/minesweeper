@@ -6,6 +6,8 @@ template.innerHTML = `
 <style>
     :host {
         font-size: 1.5rem;
+        user-select: none;
+        -moz-user-select: none;
     }
 
     :host[hidden] {
@@ -83,22 +85,16 @@ export class MinesweeperConfigurationElement extends HTMLElement {
             else {
                 this.setupDropdownElement.classList.add('visible');
             }
+
             e.preventDefault();
         });
 
-        this.shadowRoot.addEventListener('click', e => {
+        this.displayElement.addEventListener('click', e => {
             this.setupDropdownElement.classList.remove('visible');
-            const node = <HTMLElement>e.target;
-            if (node.tagName === 'DT') {
-                this.currentConfiguration = ConfigurationStore.getConfigurations().find(c => String(c.id) === node.id);
-            }
-            
-            if (node.tagName === 'DT' || node.tagName === 'BUTTON') {
-                this.dispatchEvent(new CustomEvent('new-game', {
-                    detail: this.currentConfiguration,
-                    bubbles: true
-                }));
-            }
+            this.dispatchEvent(new CustomEvent('new-game', {
+                detail: this.currentConfiguration,
+                bubbles: true
+            }));
         });
 
         this.currentConfiguration = ConfigurationStore.getCurrentConfiguration();
@@ -146,6 +142,15 @@ export class MinesweeperConfigurationElement extends HTMLElement {
             configurationElement.textContent = configuration.name;
             configurationDetailsElement.textContent = `${configuration.width} x ${configuration.height} board with ${configuration.mines} mines${configuration.highScore === Infinity ? '' : ` (High score: ${configuration.highScore})`}`;
             configurationElement.appendChild(configurationDetailsElement);
+
+            configurationElement.addEventListener('click', e => {
+                this.setupDropdownElement.classList.remove('visible');
+                this.currentConfiguration = configuration;
+                this.dispatchEvent(new CustomEvent('new-game', {
+                    detail: this.currentConfiguration,
+                    bubbles: true
+                }));
+            });
 
             this.setupDropdownElement.appendChild(configurationElement);
         }

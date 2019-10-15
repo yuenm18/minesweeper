@@ -6,6 +6,8 @@ template.innerHTML = `
         color: red;
         font-family: 'DSEG7-Classic';
         font-size: 2rem;
+        user-select: none;
+        -moz-user-select: none;
     }
 
     :host[hidden] {
