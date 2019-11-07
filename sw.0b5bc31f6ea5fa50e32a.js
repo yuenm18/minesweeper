@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[3],{dJh7:function(e,r){"serviceWorker"in navigator&&window.addEventListener("load",()=>{navigator.serviceWorker.register("service-worker.js").then(e=>{console.log("Service Worker registration successful with scope: ",e)},e=>{console.log("Service Worker registration failed: ",e)})})}},[["dJh7",0]]]);
