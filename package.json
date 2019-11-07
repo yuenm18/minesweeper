@@ -4,11 +4,11 @@
   "description": "Minesweeper",
   "main": "main.ts",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.js --color --progress",
-    "serve": "npm run build && serve dist",
     "build": "webpack --config webpack.prod.js",
-    "test": "karma start",
-    "lint": "eslint **/*.ts --ignore-pattern node_modules"
+    "lint": "eslint **/*.ts",
+    "serve": "npm run build && serve dist",
+    "start": "webpack-dev-server --config webpack.dev.js --color --progress",
+    "test": "karma start"
   },
   "author": "Matthew Yuen",
   "license": "ISC",
@@ -18,7 +18,6 @@
     "@typescript-eslint/parser": "^2.3.3",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.2.0",
-    "dseg": "^0.45.1",
     "eslint": "^6.5.1",
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
@@ -31,6 +30,8 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.32",
     "karma-webpack": "^4.0.2",
+    "mini-css-extract-plugin": "^0.8.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
     "script-ext-html-webpack-plugin": "^2.1.4",
     "serve": "^11.2.0",
     "style-loader": "^1.0.0",
@@ -42,5 +43,8 @@
     "webpack-merge": "^4.2.2",
     "webpack-pwa-manifest": "^4.0.0",
     "workbox-webpack-plugin": "^4.3.1"
+  },
+  "dependencies": {
+    "dseg": "^0.45.1"
   }
 }

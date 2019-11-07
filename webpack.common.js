@@ -6,12 +6,9 @@ const WebpackPwaManifest = require('webpack-pwa-manifest');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 
 module.exports = {
-    entry: './src/main.ts',
-    devServer: {
-        compress: true,
-        host: '0.0.0.0',
-        hot: true,
-        overlay: true
+    entry: {
+        main: './src/main.ts',
+        styles: './src/styles.css'
     },
     module: {
         rules: [
@@ -21,13 +18,6 @@ module.exports = {
                 exclude: /node_modules/
             },
             {
-                test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
-            },
-            {
                 test: /\.(woff(2)?|ttf|eot$)/,
                 loader: 'file-loader',
                 options: {
@@ -35,6 +25,10 @@ module.exports = {
                 }
             }
         ]
+    },
+    optimization: {
+        moduleIds: 'hashed',
+        runtimeChunk: 'single'
     },
     plugins: [
         new CleanWebpackPlugin(),

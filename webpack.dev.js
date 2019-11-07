@@ -10,5 +10,16 @@ module.exports = merge(common, {
         overlay: true
     },
     devtool: 'inline-source-map',
-    mode: 'development'
+    mode: 'development',
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            }
+        ]
+    }
 });
