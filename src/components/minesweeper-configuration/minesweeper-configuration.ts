@@ -14,7 +14,12 @@ template.innerHTML = `
         display: none;
     }
 
-    #display:active {
+    *:focus {
+        outline: none;
+        -moz-outline: none;
+    }
+
+    #display:active, #display:focus {
         border-style: inset;
     }
 
@@ -41,9 +46,10 @@ template.innerHTML = `
 
     .setup-dropdown.visible {
         display: block;
+        padding: 0;
     }
 
-    .setup-dropdown *:hover {
+    .setup-dropdown *:hover, .setup-dropdown *:focus {
         background-color: darkgrey;
     }
 
@@ -58,10 +64,14 @@ template.innerHTML = `
     span {
         font-size: 50%;
     }
+
+    li {
+        list-style: none;
+    }
 </style>
 <button id="display"></button>
-<dl id="setup-dropdown" class="setup-dropdown">
-</dl>
+<ul id="setup-dropdown" class="setup-dropdown">
+</ul>
 `;
 
 export class MinesweeperConfigurationElement extends HTMLElement {
@@ -71,30 +81,37 @@ export class MinesweeperConfigurationElement extends HTMLElement {
 
     constructor() {
         super();
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.displayElement = this.shadowRoot.getElementById('display');
         this.setupDropdownElement = this.shadowRoot.getElementById('setup-dropdown');
         this.buildSetupList();
 
-        this.shadowRoot.addEventListener('contextmenu', e => {
-            if (this.setupDropdownElement.classList.contains('visible')) {
-                this.setupDropdownElement.classList.remove('visible');
-            }
-            else {
-                this.setupDropdownElement.classList.add('visible');
-            }
-
-            e.preventDefault();
+        this.displayElement.addEventListener('click', e => {
+            this.dispatchNewGame();
         });
 
-        this.displayElement.addEventListener('click', e => {
-            this.setupDropdownElement.classList.remove('visible');
-            this.dispatchEvent(new CustomEvent('new-game', {
-                detail: this.currentConfiguration,
-                bubbles: true
-            }));
+        this.addEventListener('keydown', e => {
+            // hide configuraiton menu is esc is pressed
+            if (e.key === 'Escape') {
+                this.setupDropdownElement.classList.remove('visible');
+            }
+            
+            // toggle visible if any normal key is pressed
+            if (/^[a-z0-9]$/.test(e.key)) {
+                this.toggleVisible();
+            }
+        });
+
+        this.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            this.toggleVisible();
+        });
+
+        // don't keep focus on mouse events
+        this.addEventListener('mousedown', e => {
+            e.preventDefault();
         });
 
         this.currentConfiguration = ConfigurationStore.getCurrentConfiguration();
@@ -136,23 +153,49 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         }
 
         for (let configuration of ConfigurationStore.getConfigurations()) {
-            const configurationElement = document.createElement('dt');
+            const configurationElement = document.createElement('li');
             const configurationDetailsElement = document.createElement('span');
             configurationElement.id = String(configuration.id);
             configurationElement.textContent = configuration.name;
+            configurationElement.tabIndex = 0;
             configurationDetailsElement.textContent = `${configuration.width} x ${configuration.height} board with ${configuration.mines} mines${configuration.highScore === Infinity ? '' : ` (High score: ${configuration.highScore})`}`;
             configurationElement.appendChild(configurationDetailsElement);
 
             configurationElement.addEventListener('click', e => {
-                this.setupDropdownElement.classList.remove('visible');
-                this.currentConfiguration = configuration;
-                this.dispatchEvent(new CustomEvent('new-game', {
-                    detail: this.currentConfiguration,
-                    bubbles: true
-                }));
+                configurationListener();
             });
 
+            configurationElement.addEventListener('keydown', e => {
+                switch (e.key) {
+                    case ' ':
+                    case 'Enter':
+                        configurationListener();
+                        break;
+                }
+            });
+
+            const configurationListener = () => {
+                this.currentConfiguration = configuration;
+                this.dispatchNewGame();
+            };
+
             this.setupDropdownElement.appendChild(configurationElement);
+        }
+    }
+
+    private dispatchNewGame() {
+        this.setupDropdownElement.classList.remove('visible');
+        this.dispatchEvent(new CustomEvent('new-game', {
+            detail: this.currentConfiguration,
+            bubbles: true
+        }));
+    }
+
+    private toggleVisible() {
+        if (this.setupDropdownElement.classList.contains('visible')) {
+            this.setupDropdownElement.classList.remove('visible');
+        } else {
+            this.setupDropdownElement.classList.add('visible');
         }
     }
 }

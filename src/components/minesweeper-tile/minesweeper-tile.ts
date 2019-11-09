@@ -21,11 +21,13 @@ template.innerHTML = `
         display: none;
     }
 
-    :host([pressed]) {
+    :host([pressed], :focus) {
         border: none;
+        outline: none;
+        -moz-outline: none;
     }
 
-    :host([mine]) {
+    :host([exploded]) {
         background-color: red;
     }
 
@@ -70,9 +72,13 @@ template.innerHTML = `
 
 export class MinesweeperTileElement extends HTMLElement {
     private displayElement: HTMLElement;
-    private isDisabled: boolean;
 
-    isMine: boolean;
+    // tile should not be modified when disabled
+    // tile is should be disabled when it is revealed or when the game is over
+    private disabled: boolean;
+
+    // whether or not this is a mine
+    private mine: boolean;
 
     get x(): number {
         return +this.getAttribute('x');
@@ -97,30 +103,38 @@ export class MinesweeperTileElement extends HTMLElement {
         this.displayElement.textContent = this.value !== '0' ? this.value : '';
     }
 
-    get visited(): boolean{
+    get visited(): boolean {
         return this.hasAttribute('visited');
-    }
-
-    get isFlagged(): boolean {
-        return this.value === '🚩';
     }
 
     constructor() {
         super();
 
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.displayElement = this.shadowRoot.getElementById('display');
-        
-        this.addEventListener('mousedown', e => {
-            if (e.buttons === 1 && !this.isDisabled && !this.isFlagged) {
-                this.setAttribute('pressed', '');
+
+        this.addEventListener('contextmenu', e => {
+            e.preventDefault();
+            this.toggleFlag();
+        });
+
+        this.addEventListener('keydown', e => {
+            switch (e.key) {
+                case 'f':
+                    this.toggleFlag();
+                    break;
+                case ' ':
+                case 'Enter':
+                    this.selectTile();
+                    break;
             }
         });
 
-        this.addEventListener('mouseover', e => {
-            if (e.buttons === 1 && !this.isDisabled && !this.isFlagged) {
+        this.addEventListener('mousedown', e => {
+            e.preventDefault(); // prevent focus on all mouse events
+            if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
                 this.setAttribute('pressed', '');
             }
         });
@@ -128,43 +142,102 @@ export class MinesweeperTileElement extends HTMLElement {
         this.addEventListener('mouseout', e => {
             this.removeAttribute('pressed');
         });
-    }
 
+        this.addEventListener('mouseover', e => {
+            if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
+                this.setAttribute('pressed', '');
+            }
+        });
+
+        this.addEventListener('mouseup', e => {
+            if (e.which === 1) {
+                this.selectTile();
+            }
+        });
+    }
 
     connectedCallback(): void {
         this.x = +this.getAttribute('x');
         this.y = +this.getAttribute('y');
+        this.hasAttribute('tabindex') || this.setAttribute('tabindex', '0');
     }
 
-    unflag(): void {
-        this.value = '';
+    disable(): void {
+        this.disabled = true;
+        this.blur();
+        this.setAttribute('tabindex', '-1');
     }
 
     flag(): void {
-        this.value = '🚩';
+        if (this.disabled || this.isFlagged()) { return; }
+
+        const flagEvent = new CustomEvent('tile-flag', { bubbles: true, cancelable: true, composed: true });
+        if (this.dispatchEvent(flagEvent)) {
+            this.value = '🚩';
+        }
     }
 
-    revealNotMine(): void {
-        this.value = '❌';
-        this.setAttribute('visited', '');
+    isDisabled(): boolean {
+        return this.disabled;
+    }
+
+    isFlagged(): boolean {
+        return this.value === '🚩';
+    }
+
+    isMine(): boolean {
+        return this.mine;
     }
 
     revealMine(clicked: boolean = false): void {
         if (clicked) {
-            this.setAttribute('mine', '');
+            this.setAttribute('exploded', '');
         }
 
         this.value = '💣';
+        this.disable();
+        this.setAttribute('visited', '');
+    }
+
+    revealNotMine(): void {
+        this.value = '❌';
+        this.disable();
         this.setAttribute('visited', '');
     }
 
     revealTileCount(numSurroundingMines: number): void {
         this.value = String(numSurroundingMines);
+        this.disable();
         this.setAttribute('visited', '');
     }
 
-    disable(): void {
-        this.isDisabled = true;
+    setMine(): void {
+        this.mine = true;
+    }
+
+    unflag(): void {
+        if (this.disabled || !this.isFlagged()) { return; }
+
+        const unflagEvent = new CustomEvent('tile-unflag', { bubbles: true, cancelable: true, composed: true });
+        if (this.dispatchEvent(unflagEvent)) {
+            this.value = '';
+        }
+    }
+
+    private toggleFlag() {
+        if (this.disabled) { return; }
+
+        if (this.isFlagged()) {
+            this.unflag();
+        } else {
+            this.flag();
+        }
+    }
+
+    private selectTile() {
+        if (!this.disabled && !this.isFlagged()) {
+            this.dispatchEvent(new CustomEvent('tile-select', { bubbles: true, composed: true }));
+        }
     }
 }
 

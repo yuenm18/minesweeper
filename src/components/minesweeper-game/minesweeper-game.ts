@@ -48,7 +48,7 @@ template.innerHTML = `
 
 export class MinesweeperGameElement extends HTMLElement {
     private configuration: Configuration;
-    private gameState: 'started' | 'in progress'| 'won' | 'lost';
+    private gameState: 'started' | 'in progress' | 'won' | 'lost';
 
     private remainingMinesElement: MinesweeperRemainingMinesElement;
     private boardElement: MinesweeperBoardElement;
@@ -58,7 +58,7 @@ export class MinesweeperGameElement extends HTMLElement {
     constructor() {
         super();
 
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
         this.boardElement = <MinesweeperBoardElement>this.shadowRoot.getElementById('board');
@@ -70,7 +70,7 @@ export class MinesweeperGameElement extends HTMLElement {
             this.setStateWon();
         });
 
-        this.boardElement.addEventListener('tile-selected', e => {
+        this.boardElement.addEventListener('tile-select', e => {
             this.setStateInProgress();
         });
 
@@ -78,11 +78,11 @@ export class MinesweeperGameElement extends HTMLElement {
             this.setStateLost();
         });
 
-        this.boardElement.addEventListener('flag', e => {
+        this.boardElement.addEventListener('tile-flag', e => {
             this.remainingMinesElement.decrease();
         });
 
-        this.boardElement.addEventListener('unflag', e => {
+        this.boardElement.addEventListener('tile-unflag', e => {
             this.remainingMinesElement.increase();
         });
 
@@ -125,9 +125,9 @@ export class MinesweeperGameElement extends HTMLElement {
         this.gameState = 'won';
         this.timerElement.stop();
         this.configurationElement.displayWon();
-        
+
         const score = this.timerElement.getTime();
-        if (this.configuration.highScore > score){
+        if (this.configuration.highScore > score) {
             this.configurationElement.updateHighScore(score);
         }
     }

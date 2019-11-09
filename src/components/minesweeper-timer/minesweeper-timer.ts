@@ -29,7 +29,7 @@ export class MinesweeperTimerElement extends HTMLElement {
     constructor() {
         super();
 
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.displayElement = this.shadowRoot.getElementById('display');
 

@@ -35,16 +35,16 @@ export class MinesweeperRemainingMinesElement extends HTMLElement {
     constructor() {
         super();
 
-        this.attachShadow({mode: 'open'});
+        this.attachShadow({ mode: 'open' });
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.displayElement = this.shadowRoot.getElementById('display');
     }
 
     attributeChangedCallback(attrName: string, oldVal: string, newVal: string) {
         switch (attrName) {
-        case 'count':
-            this.displayElement.textContent = this.getCount();
-            break;
+            case 'count':
+                this.displayElement.textContent = this.getCount();
+                break;
         }
     }
 

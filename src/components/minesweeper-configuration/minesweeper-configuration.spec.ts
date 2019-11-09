@@ -15,26 +15,17 @@ describe('Minesweeper configuration', () => {
         expect(element.constructor).toBe(MinesweeperConfigurationElement);
     });
 
-    it('should display happy', () => {
-        minesweeperConfigurationElement.displayHappy();
-        expect(minesweeperConfigurationElement.shadowRoot.getElementById('display').textContent).toBe('😊');
-    });
+    it('should not focus on mouse down', () => {
+        const mouseDownEvent = new MouseEvent('mousedown');
+        Object.defineProperty(mouseDownEvent, 'buttons', {
+            value: 1
+        });
 
-    it('should display lost', () => {
-        minesweeperConfigurationElement.displayLost();
-        expect(minesweeperConfigurationElement.shadowRoot.getElementById('display').textContent).toBe('☹️');
-    });
+        minesweeperConfigurationElement.dispatchEvent(mouseDownEvent);
 
-    it('should display surprise', () => {
-        minesweeperConfigurationElement.displaySurprise();
-        expect(minesweeperConfigurationElement.shadowRoot.getElementById('display').textContent).toBe('😮');
+        expect(document.activeElement).not.toBe(minesweeperConfigurationElement);
     });
-
-    it('should display won', () => {
-        minesweeperConfigurationElement.displayWon();
-        expect(minesweeperConfigurationElement.shadowRoot.getElementById('display').textContent).toBe('😎');
-    });
-
+    
     it('should update high score', () => {
         spyOn(ConfigurationStore, 'addOrUpdateConfiguration').and.callThrough();
         minesweeperConfigurationElement.updateHighScore(100);
@@ -42,30 +33,149 @@ describe('Minesweeper configuration', () => {
         expect(ConfigurationStore.addOrUpdateConfiguration).toHaveBeenCalledWith(jasmine.objectContaining({ highScore: 100 }));
     });
 
-    it('should show and hide list of games when right clicked', () => {
-        const rightClickElement = new MouseEvent('contextmenu', { bubbles: true });
-        minesweeperConfigurationElement.shadowRoot.dispatchEvent(rightClickElement);
-        expect(minesweeperConfigurationElement.shadowRoot.getElementById('setup-dropdown')).toHaveClass('visible');
-
-        minesweeperConfigurationElement.shadowRoot.dispatchEvent(rightClickElement);
-        expect(minesweeperConfigurationElement.shadowRoot.getElementById('setup-dropdown')).not.toHaveClass('visible');
-    });
-
-    it('should start new games when clicked', () => {
-        const callback = jasmine.createSpy();
-        minesweeperConfigurationElement.addEventListener('new-game', callback);
+    it('should start new game when button is clicked', () => {
+        let newGameCallback = jasmine.createSpy('newGameCallback');
+        minesweeperConfigurationElement.addEventListener('new-game', newGameCallback);
         const clickEvent = new MouseEvent('click', { bubbles: true });
+
         minesweeperConfigurationElement.shadowRoot.getElementById('display').dispatchEvent(clickEvent);
-        expect(callback).toHaveBeenCalled();
+
+        expect(newGameCallback).toHaveBeenCalled();
     });
 
-    it('should start new advanced game', () => {
-        const callback = jasmine.createSpy();
-        minesweeperConfigurationElement.addEventListener('new-game', callback);
-        const clickEvent = new MouseEvent('click', { bubbles: true });
-        minesweeperConfigurationElement.shadowRoot.getElementById('3').dispatchEvent(clickEvent);
-        expect(callback).toHaveBeenCalled();
-        expect(callback).toHaveBeenCalledWith(jasmine.objectContaining({ detail: jasmine.objectContaining({ id: 3 }) }));
+    describe('should display', () => {
+        let displayElement: HTMLElement;
+
+        beforeEach(() => {
+            displayElement = minesweeperConfigurationElement.shadowRoot.getElementById('display');
+        });
+
+        it('happy by default', () => {
+            expect(displayElement.textContent).toBe('😊');
+        });
+
+        it('happy', () => {
+            minesweeperConfigurationElement.displayWon();
+
+            minesweeperConfigurationElement.displayHappy();
+
+            expect(displayElement.textContent).toBe('😊');
+        });
+
+        it('lost', () => {
+            minesweeperConfigurationElement.displayLost();
+
+            expect(displayElement.textContent).toBe('☹️');
+        });
+
+        it('surprise', () => {
+            minesweeperConfigurationElement.displaySurprise();
+
+            expect(displayElement.textContent).toBe('😮');
+        });
+
+        it('won', () => {
+            minesweeperConfigurationElement.displayWon();
+
+            expect(displayElement.textContent).toBe('😎');
+        });
+    });
+
+    describe('should show list of games', () => {
+        let setupDropdown: HTMLElement;
+
+        beforeEach(() => {
+            setupDropdown = minesweeperConfigurationElement.shadowRoot.getElementById('setup-dropdown');
+        });
+
+        it('when contextmenu is shown', () => {
+            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true });
+
+            minesweeperConfigurationElement.dispatchEvent(contextmenuEvent);
+
+            expect(setupDropdown).toHaveClass('visible');
+        });
+
+        it('when an alphanumeric key is clicked', () => {
+            const keydownEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true });
+
+            minesweeperConfigurationElement.dispatchEvent(keydownEvent);
+
+            expect(setupDropdown).toHaveClass('visible');
+        });
+
+    });
+
+    describe('should hide list of games', () => {
+        let setupDropdown: HTMLElement;
+
+        beforeEach(() => {
+            setupDropdown = minesweeperConfigurationElement.shadowRoot.getElementById('setup-dropdown');
+
+            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true });
+            minesweeperConfigurationElement.dispatchEvent(contextmenuEvent);
+        });
+
+        it('when contextmenu is shown', () => {
+            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true });
+
+            minesweeperConfigurationElement.dispatchEvent(contextmenuEvent);
+
+            expect(setupDropdown).not.toHaveClass('visible');
+        });
+
+        it('when an alphanumeric key is clicked', () => {
+            const keydownEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true });
+
+            minesweeperConfigurationElement.dispatchEvent(keydownEvent);
+
+            expect(setupDropdown).not.toHaveClass('visible');
+        });
+
+        it('when the Escape key is clicked', () => {
+            const keydownEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+
+            minesweeperConfigurationElement.dispatchEvent(keydownEvent);
+
+            expect(setupDropdown).not.toHaveClass('visible');
+        });
+    });
+
+    describe('should start new game new advanced game', () => {
+        let newGameCallback: jasmine.Func;
+        let advancedGameOption: HTMLElement;
+
+        beforeEach(() => {
+            advancedGameOption = minesweeperConfigurationElement.shadowRoot.getElementById('3');
+            
+            newGameCallback = jasmine.createSpy('newGameCallback');
+            minesweeperConfigurationElement.addEventListener('new-game', newGameCallback);
+        });
+
+        it('should start', () => {
+            const clickEvent = new MouseEvent('click', { bubbles: true });
+
+            advancedGameOption.dispatchEvent(clickEvent);
+
+            expect(newGameCallback).toHaveBeenCalledWith(jasmine.objectContaining({ detail: jasmine.objectContaining({ id: 3 }) }));
+        });
+
+
+        it('when space key is pressed', () => {
+            const keyboardEvent = new KeyboardEvent('click', { key: ' ', bubbles: true });
+
+            advancedGameOption.dispatchEvent(keyboardEvent);
+
+            expect(newGameCallback).toHaveBeenCalledWith(jasmine.objectContaining({ detail: jasmine.objectContaining({ id: 3 }) }));
+        });
+
+        it('when Enter key is pressed', () => {
+            const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+
+            advancedGameOption.dispatchEvent(keyboardEvent);
+
+            expect(newGameCallback).toHaveBeenCalledWith(jasmine.objectContaining({ detail: jasmine.objectContaining({ id: 3 }) }));
+        });
     });
 
     afterEach(() => {

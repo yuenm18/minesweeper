@@ -45,11 +45,11 @@ export class ConfigurationStore {
 
     static addOrUpdateConfiguration(configuration: Configuration): void {  
         const configurations = this.getConfigurationsFromLocalStorage() || [];
+        
         const index = configurations.findIndex(c => c.id === configuration.id);
         if (index !== -1) {
             configurations.splice(index, 1, configuration);
-        }
-        else {
+        } else {
             configurations.push(configuration);
         }
 

@@ -65,8 +65,8 @@ describe('Minesweeper game', () => {
         expect(minesweeperRemainingMinesElement.reset).toHaveBeenCalled();
     });
 
-    it('should go to started state after receiving tile selected event', () => {
-        const tileSelectedEvent = new CustomEvent('tile-selected', {
+    it('should go to started state after receiving tile select event', () => {
+        const tileSelectedEvent = new CustomEvent('tile-select', {
             bubbles: true
         });
 
@@ -99,7 +99,7 @@ describe('Minesweeper game', () => {
     });
 
     it('should go decrease remaining mine count after receiving flag event', () => {
-        const flagEvent = new CustomEvent('flag', {
+        const flagEvent = new CustomEvent('tile-flag', {
             bubbles: true
         });
 
@@ -109,7 +109,7 @@ describe('Minesweeper game', () => {
     });
 
     it('should go increase remaining mine count after receiving unflag event', () => {
-        const unflagEvent = new CustomEvent('unflag', {
+        const unflagEvent = new CustomEvent('tile-unflag', {
             bubbles: true
         });
 
@@ -123,7 +123,7 @@ describe('Minesweeper game', () => {
             bubbles: true
         });
 
-        const tileSelectedEvent = new CustomEvent('tile-selected', {
+        const tileSelectedEvent = new CustomEvent('tile-select', {
             bubbles: true
         });
 
@@ -138,7 +138,7 @@ describe('Minesweeper game', () => {
             bubbles: true
         });
         
-        const tileSelectedEvent = new CustomEvent('tile-selected', {
+        const tileSelectedEvent = new CustomEvent('tile-select', {
             bubbles: true
         });
 

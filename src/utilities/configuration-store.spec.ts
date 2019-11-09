@@ -22,7 +22,7 @@ describe('Configuration store', () => {
         expect(localStorage.getItem).toHaveBeenCalledTimes(1);
     });
 
-    it('should get configuration is it exists in local storage', () => {
+    it('should get configuration if it exists in local storage', () => {
         localStorageFake.set(LOCAL_STORAGE_KEY, JSON.stringify(
             [{
                 id: 1,
