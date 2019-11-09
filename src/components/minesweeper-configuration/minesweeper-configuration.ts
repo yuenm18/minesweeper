@@ -152,7 +152,7 @@ export class MinesweeperConfigurationElement extends HTMLElement {
             this.setupDropdownElement.removeChild(this.setupDropdownElement.firstChild);
         }
 
-        for (let configuration of ConfigurationStore.getConfigurations()) {
+        for (const configuration of ConfigurationStore.getConfigurations()) {
             const configurationElement = document.createElement('li');
             const configurationDetailsElement = document.createElement('span');
             configurationElement.id = String(configuration.id);

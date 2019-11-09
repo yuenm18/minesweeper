@@ -17,6 +17,9 @@ template.innerHTML = `
 <div id="display"></div>
 `;
 
+const DISPLAY_DIGITS = 3;
+const ONE_SECOND_MS = 1000;
+
 export class MinesweeperTimerElement extends HTMLElement {
     private timerInterval: number;
     private timerCount: number;
@@ -52,7 +55,7 @@ export class MinesweeperTimerElement extends HTMLElement {
         this.timerInterval = <number><any>setInterval(() => {
             this.timerCount++;
             this.displayElement.textContent = this.getCount();
-        }, 1000);
+        }, ONE_SECOND_MS);
     }
 
     stop() {
@@ -67,7 +70,7 @@ export class MinesweeperTimerElement extends HTMLElement {
     }
 
     private getCount() {
-        return String(this.timerCount).padStart(3, '0');
+        return String(this.timerCount).padStart(DISPLAY_DIGITS, '0');
     }
 }
 

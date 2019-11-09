@@ -27,14 +27,17 @@ describe('Minesweeper configuration', () => {
     });
     
     it('should update high score', () => {
+        const newHighScore = 100;
         spyOn(ConfigurationStore, 'addOrUpdateConfiguration').and.callThrough();
-        minesweeperConfigurationElement.updateHighScore(100);
+
+        minesweeperConfigurationElement.updateHighScore(newHighScore);
+        
         expect(ConfigurationStore.addOrUpdateConfiguration).toHaveBeenCalledTimes(1);
-        expect(ConfigurationStore.addOrUpdateConfiguration).toHaveBeenCalledWith(jasmine.objectContaining({ highScore: 100 }));
+        expect(ConfigurationStore.addOrUpdateConfiguration).toHaveBeenCalledWith(jasmine.objectContaining({ highScore: newHighScore }));
     });
 
     it('should start new game when button is clicked', () => {
-        let newGameCallback = jasmine.createSpy('newGameCallback');
+        const newGameCallback = jasmine.createSpy('newGameCallback');
         minesweeperConfigurationElement.addEventListener('new-game', newGameCallback);
         const clickEvent = new MouseEvent('click', { bubbles: true });
 

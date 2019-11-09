@@ -14,29 +14,42 @@ describe('Minesweeper board', () => {
         const element = document.querySelector('minesweeper-board');
         expect(element.constructor).toBe(MinesweeperBoardElement);
     });
-    
+
+    it('should reflect attributes to properties', () => {
+        const width = 10, height = 15, mines = 20;
+        minesweeperBoardElement.setAttribute('width', String(width));
+        minesweeperBoardElement.setAttribute('height', String(height));
+        minesweeperBoardElement.setAttribute('mines', String(mines));
+
+        expect(minesweeperBoardElement.width).toEqual(width);
+        expect(minesweeperBoardElement.height).toEqual(height);
+        expect(minesweeperBoardElement.mines).toEqual(mines);
+    });
 
     it('should reflect properties to attributes', () => {
-        minesweeperBoardElement.width = 10;
-        minesweeperBoardElement.height = 15;
-        minesweeperBoardElement.mines = 20;
+        const width = 10, height = 15, mines = 20;
+        minesweeperBoardElement.width = width;
+        minesweeperBoardElement.height = height;
+        minesweeperBoardElement.mines = mines;
 
-        expect(minesweeperBoardElement.getAttribute('width')).toEqual('10');
-        expect(minesweeperBoardElement.getAttribute('height')).toEqual('15');
-        expect(minesweeperBoardElement.getAttribute('mines')).toEqual('20');
+        expect(minesweeperBoardElement.getAttribute('width')).toEqual(String(width));
+        expect(minesweeperBoardElement.getAttribute('height')).toEqual(String(height));
+        expect(minesweeperBoardElement.getAttribute('mines')).toEqual(String(mines));
     });
 
     it('should create a 10x10 board with 10 mines', () => {
-        minesweeperBoardElement.initializeBoard(10, 10, 10);
+        const width = 10, height = 11, mines = 10, total = width * height;
+        minesweeperBoardElement.initializeBoard(width, height, mines);
 
-        expect(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile').length).toBe(100);
-        expect(minesweeperBoardElement.shadowRoot.querySelectorAll('tr').length).toBe(10);
-        expect(minesweeperBoardElement.shadowRoot.querySelector('tr').querySelectorAll('td').length).toBe(10);
-        expect([].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine()).length).toBe(10);
+        expect(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile').length).toBe(total);
+        expect(minesweeperBoardElement.shadowRoot.querySelectorAll('tr').length).toBe(height);
+        expect(minesweeperBoardElement.shadowRoot.querySelector('tr').querySelectorAll('td').length).toBe(width);
+        expect([].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine()).length).toBe(mines);
     });
 
     it('should reveal tiles when clicking mine', () => {
-        minesweeperBoardElement.initializeBoard(10, 10, 10);
+        const width = 10, height = 10, mines = 10;
+        minesweeperBoardElement.initializeBoard(width, height, mines);
 
         const clickEvent = new MouseEvent('mouseup', {
             bubbles: true
@@ -63,7 +76,8 @@ describe('Minesweeper board', () => {
     });
 
     it('should reveal surrounding tiles if tile has no surrounding mines', () => {
-        minesweeperBoardElement.initializeBoard(10, 10, 1);
+        const width = 10, height = 10, mines = 1;
+        minesweeperBoardElement.initializeBoard(width, height, mines);
 
         const clickEvent = new MouseEvent('mouseup', {
             bubbles: true
@@ -84,7 +98,8 @@ describe('Minesweeper board', () => {
         const tileSelectCallback = jasmine.createSpy('tileSelectCallback');
         minesweeperBoardElement.addEventListener('tile-select', tileSelectCallback);
 
-        minesweeperBoardElement.initializeBoard(10, 10, 1);
+        const width = 10, height = 10, mines = 1;
+        minesweeperBoardElement.initializeBoard(width, height, mines);
 
         const clickEvent = new MouseEvent('mouseup', {
             bubbles: true
@@ -100,7 +115,8 @@ describe('Minesweeper board', () => {
         const wonCallback = jasmine.createSpy('wonCallback');
         minesweeperBoardElement.addEventListener('won', wonCallback);
 
-        minesweeperBoardElement.initializeBoard(10, 10, 1);
+        const width = 10, height = 10, mines = 1;
+        minesweeperBoardElement.initializeBoard(width, height, mines);
 
         const clickEvent = new MouseEvent('mouseup', {
             bubbles: true
@@ -108,7 +124,7 @@ describe('Minesweeper board', () => {
 
         const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
 
-        for (let notMineTile of notMineTiles) {
+        for (const notMineTile of notMineTiles) {
             notMineTile.dispatchEvent(clickEvent);
         }
 
@@ -120,7 +136,8 @@ describe('Minesweeper board', () => {
         const lostCallback = jasmine.createSpy('lostCallback');
         minesweeperBoardElement.addEventListener('lost', lostCallback);
 
-        minesweeperBoardElement.initializeBoard(10, 10, 1);
+        const width = 10, height = 10, mines = 1;
+        minesweeperBoardElement.initializeBoard(width, height, mines);
 
         const clickEvent = new MouseEvent('mouseup', {
             bubbles: true
@@ -144,7 +161,8 @@ describe('Minesweeper board', () => {
         minesweeperBoardElement.addEventListener('tile-flag', flagCallback);
         minesweeperBoardElement.addEventListener('tile-unflag', unflagCallback);
 
-        minesweeperBoardElement.initializeBoard(1, 2, 1);
+        const width = 1, height = 2, mines = 1;
+        minesweeperBoardElement.initializeBoard(width, height, mines);
 
         const clickEvent = new MouseEvent('mouseup', {
             bubbles: true

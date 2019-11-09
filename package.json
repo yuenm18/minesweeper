@@ -8,7 +8,8 @@
     "lint": "eslint **/*.ts",
     "serve": "npm run build && serve dist",
     "start": "webpack-dev-server --config webpack.dev.js --color --progress",
-    "test": "karma start"
+    "test": "karma start",
+    "test-watch": "karma start --no-single-run"
   },
   "author": "Matthew Yuen",
   "license": "ISC",

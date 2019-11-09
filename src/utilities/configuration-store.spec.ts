@@ -17,8 +17,11 @@ describe('Configuration store', () => {
     });
 
     it('should get default configuration is none exists in local storage', () => {
+        const displayLength = 3;
+
         const configurations = ConfigurationStore.getConfigurations();
-        expect(configurations.length).toBe(3);
+
+        expect(configurations.length).toBe(displayLength);
         expect(localStorage.getItem).toHaveBeenCalledTimes(1);
     });
 

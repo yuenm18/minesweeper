@@ -106,7 +106,7 @@ export class MinesweeperBoardElement extends HTMLElement {
         for (let i = 0; i < this.height; i++) {
             const tr = document.createElement('tr');
             for (let j = 0; j < this.width; j++) {
-                let tile = <MinesweeperTileElement>document.createElement('minesweeper-tile');
+                const tile = <MinesweeperTileElement>document.createElement('minesweeper-tile');
                 tile.setAttribute('x', String(i));
                 tile.setAttribute('y', String(j));
                 this.tiles[i * this.width + j] = tile;
@@ -169,11 +169,11 @@ export class MinesweeperBoardElement extends HTMLElement {
     }
 
     private revealTiles(tile: MinesweeperTileElement): boolean {
-        let tilesToCheck: Array<MinesweeperTileElement> = [];
+        const tilesToCheck: Array<MinesweeperTileElement> = [];
         tilesToCheck.push(tile);
 
         while (tilesToCheck.length) {
-            let tile = tilesToCheck.pop();
+            const tile = tilesToCheck.pop();
             if (tile.visited || tile.isFlagged()) {
                 continue;
             }

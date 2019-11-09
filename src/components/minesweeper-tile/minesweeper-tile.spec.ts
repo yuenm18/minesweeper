@@ -10,28 +10,30 @@ describe('Minesweeper tile element', () => {
     });
 
     it('should be an instance of a minesweeper tile', () => {
-        let element = document.querySelector('minesweeper-tile');
+        const element = document.querySelector('minesweeper-tile');
         expect(element.constructor).toBe(MinesweeperTileElement);
     });
 
     it('should reflect properties to attributes', () => {
-        minesweeperTileElement.x = 1;
-        minesweeperTileElement.y = 2;
-        minesweeperTileElement.value = '3';
+        const x = 1, y = 2, value = '3';
+        minesweeperTileElement.x = x;
+        minesweeperTileElement.y = y;
+        minesweeperTileElement.value = value;
 
-        expect(minesweeperTileElement.getAttribute('x')).toEqual('1');
-        expect(minesweeperTileElement.getAttribute('y')).toEqual('2');
-        expect(minesweeperTileElement.getAttribute('value')).toEqual('3');
+        expect(minesweeperTileElement.getAttribute('x')).toEqual(String(x));
+        expect(minesweeperTileElement.getAttribute('y')).toEqual(String(y));
+        expect(minesweeperTileElement.getAttribute('value')).toEqual(value);
     });
 
     it('should reflect attributes to properties', () => {
-        minesweeperTileElement.setAttribute('x', '1');
-        minesweeperTileElement.setAttribute('y', '2');
-        minesweeperTileElement.setAttribute('value', '3');
+        const x = 1, y = 2, value = '3';
+        minesweeperTileElement.setAttribute('x', String(x));
+        minesweeperTileElement.setAttribute('y', String(y));
+        minesweeperTileElement.setAttribute('value', value);
 
-        expect(minesweeperTileElement.x).toEqual(1);
-        expect(minesweeperTileElement.y).toEqual(2);
-        expect(minesweeperTileElement.value).toEqual('3');
+        expect(minesweeperTileElement.x).toEqual(x);
+        expect(minesweeperTileElement.y).toEqual(y);
+        expect(minesweeperTileElement.value).toEqual(value);
     });
         
     describe('should not focus', () => {
@@ -377,11 +379,12 @@ describe('Minesweeper tile element', () => {
         });
 
         it('tile count', () => {
-            minesweeperTileElement.revealTileCount(9);
+            const tileCount = 9;
+            minesweeperTileElement.revealTileCount(tileCount);
 
-            expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBe('9');
-            expect(minesweeperTileElement.value).toBe('9');
-            expect(minesweeperTileElement.getAttribute('value')).toBe('9');
+            expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBe(String(tileCount));
+            expect(minesweeperTileElement.value).toBe(String(tileCount));
+            expect(minesweeperTileElement.getAttribute('value')).toBe(String(tileCount));
             expect(minesweeperTileElement.hasAttribute('visited')).toBeTruthy();
             expect(minesweeperTileElement.visited).toBeTruthy();
             expect(minesweeperTileElement.isDisabled()).toBeTruthy();

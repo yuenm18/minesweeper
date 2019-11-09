@@ -12,47 +12,80 @@ describe('Minesweeper remaining element', () => {
     });
 
     it('should be an instance of a minesweeper remaining mines', () => {
-        let element = document.querySelector('minesweeper-remaining-mines');
+        const element = document.querySelector('minesweeper-remaining-mines');
         expect(element.constructor).toBe(MinesweeperRemainingMinesElement);
     });
 
     it('should reflect properties to attributes', () => {
-        minesweeperRemainingMinesElement.count = 10;
-        expect(minesweeperRemainingMinesElement.getAttribute('count')).toBe('10');
+        const count = 10;
+
+        minesweeperRemainingMinesElement.count = count;
+        
+        expect(minesweeperRemainingMinesElement.getAttribute('count')).toBe(String(count));
     });
 
     it('should reflect attributes to properties', () => {
-        minesweeperRemainingMinesElement.setAttribute('count', '10');
-        expect(minesweeperRemainingMinesElement.count).toBe(10);
+        const count = 10;
+
+        minesweeperRemainingMinesElement.setAttribute('count', String(count));
+        
+        expect(minesweeperRemainingMinesElement.count).toBe(count);
     });
 
     it('should reset count', () => {
-        minesweeperRemainingMinesElement.reset(10);
-        expect(minesweeperRemainingMinesElement.count).toBe(10);
+        const newCount = 10;
+
+        minesweeperRemainingMinesElement.reset(newCount);
+        
+        expect(minesweeperRemainingMinesElement.count).toBe(newCount);
     });
 
     it('should increase count', () => {
-        minesweeperRemainingMinesElement.reset(10);
-        expect(minesweeperRemainingMinesElement.count).toBe(10);
+        const initialCount = 10;
+        const finalCount = initialCount + 1;
+        minesweeperRemainingMinesElement.reset(initialCount);
 
         minesweeperRemainingMinesElement.increase();
-        expect(minesweeperRemainingMinesElement.count).toBe(11);
+
+        expect(minesweeperRemainingMinesElement.count).toBe(finalCount);
     });
 
-    it('should descrease count', () => {
-        minesweeperRemainingMinesElement.reset(10);
-        expect(minesweeperRemainingMinesElement.count).toBe(10);
+    it('should decrease count', () => {
+        const initialCount = 10;
+        const finalCount = initialCount - 1;
+        minesweeperRemainingMinesElement.reset(initialCount);
         
         minesweeperRemainingMinesElement.decrease();
-        expect(minesweeperRemainingMinesElement.count).toBe(9);
+
+        expect(minesweeperRemainingMinesElement.count).toBe(finalCount);
     });
 
-    it('should reflect count to display', () => {
-        minesweeperRemainingMinesElement.reset(10);
-        expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('010');
+    describe('should reflect count to display', () => {
+        it('after reset', () => {
+            const count = 10;
+    
+            minesweeperRemainingMinesElement.reset(count);
+
+            expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('010');
+        });
+
+        it('after decrease', () => {
+            const initialCount = 10;
+            minesweeperRemainingMinesElement.reset(initialCount);
+    
+            minesweeperRemainingMinesElement.decrease();
+
+            expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('009');
+        });
         
-        minesweeperRemainingMinesElement.increase();
-        expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('011');
+        it('after increase', () => {
+            const initialCount = 10;
+            minesweeperRemainingMinesElement.reset(initialCount);
+    
+            minesweeperRemainingMinesElement.increase();
+
+            expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('011');
+        });
     });
 
     afterEach(() => {

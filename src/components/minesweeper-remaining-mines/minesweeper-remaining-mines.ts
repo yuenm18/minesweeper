@@ -17,6 +17,8 @@ template.innerHTML = `
 <div id="display"></div>
 `;
 
+const DISPLAY_DIGITS = 3;
+
 export class MinesweeperRemainingMinesElement extends HTMLElement {
     private displayElement: HTMLElement;
 
@@ -61,7 +63,7 @@ export class MinesweeperRemainingMinesElement extends HTMLElement {
     }
 
     private getCount(): string {
-        return this.count >= 0 ? String(this.count).padStart(3, '0') : String(this.count).padStart(3, '\xa0');
+        return this.count >= 0 ? String(this.count).padStart(DISPLAY_DIGITS, '0') : String(this.count).padStart(DISPLAY_DIGITS, '\xa0');
     }
 }
 
