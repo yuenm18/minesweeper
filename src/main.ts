@@ -7,7 +7,7 @@ import './components/minesweeper-configuration/minesweeper-configuration';
 
 function main() {
     const minesweeper = document.createElement('minesweeper-game');
-    document.body.appendChild(minesweeper);
+    document.getElementById('minesweeper').appendChild(minesweeper);
 }
 
 main();

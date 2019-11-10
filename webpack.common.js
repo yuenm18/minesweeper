@@ -3,8 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const PreloadWebpackPlugin = require('preload-webpack-plugin');
+
 module.exports = {
     entry: {
         main: './src/main.ts',
@@ -45,10 +45,8 @@ module.exports = {
                 }
             ],
             mobile: true,
-            bodyHtmlSnippet: '<noscript>You need to enable JavaScript to run this app.</noscript>'
-        }),
-        new ScriptExtHtmlWebpackPlugin({
-            defaultAttribute: 'defer'
+            appMountId: 'minesweeper',
+            appMountHtmlSnippet: '<noscript>You need to enable JavaScript to run this app.</noscript>'
         }),
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,
@@ -81,7 +79,13 @@ module.exports = {
             ios: true
         }),
         new PreloadWebpackPlugin({
-            include: 'allAssets'
+            include: 'allAssets',
+            fileWhitelist: [/\.css$/, /\.woff2/, /\.js$/],
+            as(entry) {
+                if (/\.css$/.test(entry)) return 'style';
+                if (/\.woff2$/.test(entry)) return 'font';
+                if (/\.js$/.test(entry)) return 'script';
+            }
         })
     ],
     resolve: {
