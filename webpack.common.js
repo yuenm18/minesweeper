@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
-
+const PreloadWebpackPlugin = require('preload-webpack-plugin');
 module.exports = {
     entry: {
         main: './src/main.ts',
@@ -79,6 +79,9 @@ module.exports = {
             ],
             theme_color: '#000000',
             ios: true
+        }),
+        new PreloadWebpackPlugin({
+            include: 'allAssets'
         })
     ],
     resolve: {
