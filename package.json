@@ -5,6 +5,7 @@
   "main": "main.ts",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
+    "lighthouse": "lhci autorun",
     "lint": "eslint **/*.ts",
     "serve": "npm run build && serve dist",
     "start": "webpack-dev-server --config webpack.dev.js --color --progress",
@@ -14,6 +15,7 @@
   "author": "Matthew Yuen",
   "license": "ISC",
   "devDependencies": {
+    "@lhci/cli": "^0.3.2",
     "@types/jasmine": "^3.4.4",
     "@typescript-eslint/eslint-plugin": "^2.3.3",
     "@typescript-eslint/parser": "^2.3.3",
