@@ -12,6 +12,8 @@ script:
   - npm test
   - npm run build
   - npm run lighthouse
+after_success:
+  - npm run coveralls
 before_deploy:
   - rm .gitignore
 deploy:
