@@ -1,4 +1,3 @@
-import './minesweeper-board';
 import { MinesweeperBoardElement } from './minesweeper-board';
 import { MinesweeperTileElement } from '../minesweeper-tile/minesweeper-tile';
 
@@ -12,7 +11,7 @@ describe('Minesweeper board', () => {
 
     it('should be instance of minesweeper board', () => {
         const element = document.querySelector('minesweeper-board');
-        expect(element.constructor).toBe(MinesweeperBoardElement);
+        expect(element.constructor.name).toBe(MinesweeperBoardElement.name);
     });
 
     it('should reflect attributes to properties', () => {
@@ -185,6 +184,101 @@ describe('Minesweeper board', () => {
         expect(tileSelectCallback).toHaveBeenCalledTimes(1);
     });
 
+    describe('should navigate', () => {
+        beforeEach(() => {
+            const width = 3, height = 3, mines = 1;
+            minesweeperBoardElement.initializeBoard(width, height, mines);
+        });
+
+        it('with arrow key up', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="1"][y="0"]')).focus();
+            const arrowUpKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowUp'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowUpKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
+        });
+
+        it('with arrow key up and wrap around', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]')).focus();
+            const arrowUpKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowUp'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowUpKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="2"][y="0"]'));
+        });
+
+        it('with arrow key right', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]')).focus();
+            const arrowRightKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowRight'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowRightKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="1"]'));
+        });
+
+        it('with arrow key right and wrap around', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="2"]')).focus();
+            const arrowRightKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowRight'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowRightKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
+        });
+
+        it('with arrow key down', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]')).focus();
+            const arrowDownKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowDown'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowDownKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="1"][y="0"]'));
+        });
+
+        it('with arrow key down and wrap around', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="2"][y="0"]')).focus();
+            const arrowDownKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowDown'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowDownKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
+        });
+        
+        it('with arrow key left', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="1"]')).focus();
+            const arrowLeftKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowLeft'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowLeftKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
+        });
+
+        it('with arrow key left and wrap around', () => {
+            (<MinesweeperTileElement>minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]')).focus();
+            const arrowLeftKeyEvent = new KeyboardEvent('keydown', {
+                key: 'ArrowLeft'
+            });
+
+            minesweeperBoardElement.dispatchEvent(arrowLeftKeyEvent);
+
+            expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="2"]'));
+        });
+    });
+    
     afterEach(() => {
         document.body.removeChild(minesweeperBoardElement);
     });

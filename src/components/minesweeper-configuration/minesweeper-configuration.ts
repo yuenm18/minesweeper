@@ -97,7 +97,7 @@ export class MinesweeperConfigurationElement extends HTMLElement {
             if (e.key === 'Escape') {
                 this.setupDropdownElement.classList.remove('visible');
             }
-            
+
             // toggle visible if any normal key is pressed
             if (/^[a-z0-9]$/.test(e.key)) {
                 this.toggleVisible();
@@ -200,5 +200,6 @@ export class MinesweeperConfigurationElement extends HTMLElement {
     }
 }
 
-
-customElements.define('minesweeper-configuration', MinesweeperConfigurationElement);
+if (!customElements.get('minesweeper-configuration')) {
+    customElements.define('minesweeper-configuration', MinesweeperConfigurationElement);
+}

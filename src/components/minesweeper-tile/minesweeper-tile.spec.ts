@@ -1,4 +1,3 @@
-import './minesweeper-tile';
 import { MinesweeperTileElement } from './minesweeper-tile';
 
 describe('Minesweeper tile element', () => {
@@ -10,8 +9,8 @@ describe('Minesweeper tile element', () => {
     });
 
     it('should be an instance of a minesweeper tile', () => {
-        const element = document.querySelector('minesweeper-tile');
-        expect(element.constructor).toBe(MinesweeperTileElement);
+        const element = document.querySelector('minesweeper-tile');        
+        expect(element.constructor.name).toBe(MinesweeperTileElement.name);
     });
 
     it('should reflect properties to attributes', () => {
@@ -35,13 +34,13 @@ describe('Minesweeper tile element', () => {
         expect(minesweeperTileElement.y).toEqual(y);
         expect(minesweeperTileElement.value).toEqual(value);
     });
-        
+
     describe('should not focus', () => {
         it('when disabled', () => {
             minesweeperTileElement.focus();
 
             minesweeperTileElement.disable();
-    
+
             expect(minesweeperTileElement.getAttribute('tabindex')).toBe('-1');
             expect(document.activeElement).not.toBe(minesweeperTileElement);
         });

@@ -67,4 +67,6 @@ export class MinesweeperRemainingMinesElement extends HTMLElement {
     }
 }
 
-customElements.define('minesweeper-remaining-mines', MinesweeperRemainingMinesElement);
+if (!customElements.get('minesweeper-remaining-mines')) {
+    customElements.define('minesweeper-remaining-mines', MinesweeperRemainingMinesElement);
+}

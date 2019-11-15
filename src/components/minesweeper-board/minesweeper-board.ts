@@ -59,7 +59,7 @@ export class MinesweeperBoardElement extends HTMLElement {
 
         this.board = this.shadowRoot.getElementById('board');
 
-        this.board.addEventListener('tile-select', e => {
+        this.shadowRoot.addEventListener('tile-select', e => {
             const minesweeperTile: MinesweeperTileElement = <MinesweeperTileElement>e.target;
             const lost = this.revealTiles(minesweeperTile);
             if (lost) {
@@ -68,6 +68,33 @@ export class MinesweeperBoardElement extends HTMLElement {
             } else if (this.isGameFinished()) {
                 this.flagAllMines();
                 this.dispatchEvent(new CustomEvent('won', { bubbles: true }));
+            }
+        });
+
+        // allow navigation through the board with arrow keys
+        this.addEventListener('keydown', e => {
+            const focusedElement = this.shadowRoot.activeElement;
+            if (focusedElement && focusedElement.constructor === MinesweeperTileElement) {
+                const focusedElementIndex = this.tiles.findIndex(t => t === focusedElement);
+                let row = Math.floor(focusedElementIndex / this.width);
+                let column = focusedElementIndex % this.width;
+
+                switch (e.key) {
+                    case 'ArrowUp':
+                        row = (this.height + row - 1) % this.height;
+                        break;
+                    case 'ArrowRight':
+                        column = (column + 1) % this.width;
+                        break;
+                    case 'ArrowDown':
+                        row = (row + 1) % this.height;
+                        break;
+                    case 'ArrowLeft':
+                        column = (this.width + column - 1) % this.width;
+                        break;
+                }
+
+                this.tiles[row * this.width + column].focus();
             }
         });
 
@@ -149,7 +176,7 @@ export class MinesweeperBoardElement extends HTMLElement {
             if (tile.isMine() && !tile.isFlagged()) {
                 tile.flag();
             }
-            
+
             tile.disable();
         });
     }
@@ -207,4 +234,6 @@ export class MinesweeperBoardElement extends HTMLElement {
     }
 }
 
-customElements.define('minesweeper-board', MinesweeperBoardElement);
+if (!customElements.get('minesweeper-board')) {
+    customElements.define('minesweeper-board', MinesweeperBoardElement);
+}

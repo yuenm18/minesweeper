@@ -74,4 +74,6 @@ export class MinesweeperTimerElement extends HTMLElement {
     }
 }
 
-customElements.define('minesweeper-timer', MinesweeperTimerElement);
+if (!customElements.get('minesweeper-timer')) {
+    customElements.define('minesweeper-timer', MinesweeperTimerElement);
+}

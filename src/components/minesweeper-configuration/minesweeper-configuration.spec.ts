@@ -1,4 +1,3 @@
-import './minesweeper-configuration';
 import { MinesweeperConfigurationElement } from './minesweeper-configuration';
 import { ConfigurationStore } from '../../utilities/configuration-store';
 
@@ -12,7 +11,7 @@ describe('Minesweeper configuration', () => {
 
     it('should be an instance of a minesweeper configuration', () => {
         const element = document.querySelector('minesweeper-configuration');
-        expect(element.constructor).toBe(MinesweeperConfigurationElement);
+        expect(element.constructor.name).toBe(MinesweeperConfigurationElement.name);
     });
 
     it('should not focus on mouse down', () => {

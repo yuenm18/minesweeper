@@ -139,4 +139,6 @@ export class MinesweeperGameElement extends HTMLElement {
     }
 }
 
-customElements.define('minesweeper-game', MinesweeperGameElement);
+if (!customElements.get('minesweeper-game')) {
+    customElements.define('minesweeper-game', MinesweeperGameElement);
+}

@@ -1,4 +1,3 @@
-import './minesweeper-timer';
 import { MinesweeperTimerElement } from './minesweeper-timer';
 
 const FIVE_SECONDS_MS = 5000;
@@ -16,7 +15,7 @@ describe('Minesweeper timer element', () => {
 
     it('should be an instance of a minesweeper timer', () => {
         const element = document.querySelector('minesweeper-timer');
-        expect(element.constructor).toBe(MinesweeperTimerElement);
+        expect(element.constructor.name).toBe(MinesweeperTimerElement.name);
     });
 
     it('should start timer', () => {

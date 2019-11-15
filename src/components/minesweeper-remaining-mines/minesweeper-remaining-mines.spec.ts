@@ -1,4 +1,3 @@
-import './minesweeper-remaining-mines';
 import { MinesweeperRemainingMinesElement } from './minesweeper-remaining-mines';
 
 describe('Minesweeper remaining element', () => {
@@ -13,7 +12,7 @@ describe('Minesweeper remaining element', () => {
 
     it('should be an instance of a minesweeper remaining mines', () => {
         const element = document.querySelector('minesweeper-remaining-mines');
-        expect(element.constructor).toBe(MinesweeperRemainingMinesElement);
+        expect(element.constructor.name).toBe(MinesweeperRemainingMinesElement.name);
     });
 
     it('should reflect properties to attributes', () => {

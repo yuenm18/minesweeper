@@ -1,4 +1,3 @@
-import './minesweeper-game';
 import { MinesweeperGameElement } from './minesweeper-game';
 import { MinesweeperTimerElement } from '../minesweeper-timer/minesweeper-timer';
 import { MinesweeperRemainingMinesElement } from '../minesweeper-remaining-mines/minesweeper-remaining-mines';
@@ -40,7 +39,7 @@ describe('Minesweeper game', () => {
 
     it('should be instance of minesweeper game', () => {
         const element = document.querySelector('minesweeper-game');
-        expect(element.constructor).toBe(MinesweeperGameElement);
+        expect(element.constructor.name).toBe(MinesweeperGameElement.name);
     });
 
     it('should go to started state after receiving new game event', () => {

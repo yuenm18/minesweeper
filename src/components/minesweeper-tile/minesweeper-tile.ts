@@ -241,4 +241,6 @@ export class MinesweeperTileElement extends HTMLElement {
     }
 }
 
-customElements.define('minesweeper-tile', MinesweeperTileElement);
+if (!customElements.get('minesweeper-tile')) {
+    customElements.define('minesweeper-tile', MinesweeperTileElement);
+}
