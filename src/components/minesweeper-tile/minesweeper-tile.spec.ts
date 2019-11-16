@@ -289,10 +289,11 @@ describe('Minesweeper tile element', () => {
             minesweeperTileElement.addEventListener('tile-select', tileSelectCallback);
         });
 
-        it('on mouseup', () => {
-            const mouseUpEvent = new MouseEvent('mouseup');
+        it('when clicked with left of left mouse button', () => {
+            const mouseupEvent = new MouseEvent('mouseup');
+            Object.defineProperty(mouseupEvent, 'which', { value: 1 });
 
-            minesweeperTileElement.dispatchEvent(mouseUpEvent);
+            minesweeperTileElement.dispatchEvent(mouseupEvent);
 
             expect(tileSelectCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, composed: true }));
         });
@@ -336,6 +337,15 @@ describe('Minesweeper tile element', () => {
             minesweeperTileElement.flag();
 
             minesweeperTileElement.dispatchEvent(mouseUpEvent);
+
+            expect(tileSelectCallback).not.toHaveBeenCalled();
+        });
+
+        it('when clicked with right mouse button', () => {
+            const mouseupEvent = new MouseEvent('mouseup');
+            Object.defineProperty(mouseupEvent, 'which', { value: 2 });
+            
+            minesweeperTileElement.dispatchEvent(mouseupEvent);
 
             expect(tileSelectCallback).not.toHaveBeenCalled();
         });

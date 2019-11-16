@@ -13,6 +13,10 @@ template.innerHTML = `
     :host[hidden] {
         display: none;
     }
+
+    #display {
+        white-space: pre;
+    }
 </style>
 <div id="display"></div>
 `;
@@ -63,7 +67,7 @@ export class MinesweeperRemainingMinesElement extends HTMLElement {
     }
 
     private getCount(): string {
-        return this.count >= 0 ? String(this.count).padStart(DISPLAY_DIGITS, '0') : String(this.count).padStart(DISPLAY_DIGITS, '\xa0');
+        return this.count >= 0 ? String(this.count).padStart(DISPLAY_DIGITS, '0') : String(this.count).padStart(DISPLAY_DIGITS, ' ');
     }
 }
 

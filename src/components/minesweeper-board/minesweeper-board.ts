@@ -108,22 +108,20 @@ export class MinesweeperBoardElement extends HTMLElement {
         this.width = +this.getAttribute('width');
         this.height = +this.getAttribute('height');
         this.mines = +this.getAttribute('mines');
-
-        setTimeout(() => this.initializeBoard(this.width, this.height, this.mines));
     }
 
     attributeChangedCallback(attrName: string, oldVal: string, newVal: string): void {
     }
 
     initializeBoard(boardWidth: number = this.width, boardHeight: number = this.height, numMines: number = this.mines): void {
+        if (numMines > boardWidth * boardHeight) {
+            console.error(`${numMines} mines is greater than the number of places in a ${boardWidth} x ${boardHeight} board`);
+            return;
+        }
+
         this.width = boardWidth;
         this.height = boardHeight;
         this.mines = numMines;
-
-        if (this.mines > this.width * this.height) {
-            console.error(`${this.mines} mines is greater than the number of places in a ${this.width} x ${this.height} board`);
-            return;
-        }
 
         while (this.board.firstChild) {
             this.board.removeChild(this.board.firstChild);

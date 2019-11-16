@@ -113,8 +113,9 @@ export class MinesweeperGameElement extends HTMLElement {
     }
 
     private setStateInProgress(): void {
+        if (this.gameState !== 'started') { return; }
         this.gameState = 'in progress';
-        if (!this.timerElement.isStarted) {
+        if (!this.timerElement.isStarted()) {
             this.timerElement.start();
         }
 

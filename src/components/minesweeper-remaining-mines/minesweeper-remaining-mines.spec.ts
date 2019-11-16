@@ -7,6 +7,9 @@ describe('Minesweeper remaining element', () => {
         minesweeperRemainingMinesElement = <MinesweeperRemainingMinesElement>document.createElement('minesweeper-remaining-mines');
         document.body.appendChild(minesweeperRemainingMinesElement);
 
+        // need to uninstall first since we're mocking setInterval in some tests (even if they're outside this file)
+        // https://github.com/jasmine/jasmine/issues/826#issuecomment-100028373
+        jasmine.clock().uninstall();
         jasmine.clock().install();
     });
 
@@ -84,6 +87,14 @@ describe('Minesweeper remaining element', () => {
             minesweeperRemainingMinesElement.increase();
 
             expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('011');
+        });
+
+        it('with negative numbers', () => {
+            const count = -1;
+    
+            minesweeperRemainingMinesElement.reset(count);
+
+            expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe(' -1');
         });
     });
 

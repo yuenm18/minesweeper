@@ -25,10 +25,6 @@ export class MinesweeperTimerElement extends HTMLElement {
     private timerCount: number;
     private displayElement: HTMLElement;
 
-    get isStarted(): boolean {
-        return !!this.timerCount;
-    }
-
     constructor() {
         super();
 
@@ -43,6 +39,10 @@ export class MinesweeperTimerElement extends HTMLElement {
         this.stop();
     }
 
+    isStarted(): boolean {
+        return !!this.timerInterval;
+    }
+
     reset() {
         this.stop();
 
@@ -51,7 +51,7 @@ export class MinesweeperTimerElement extends HTMLElement {
     }
 
     start() {
-        if (this.timerInterval) return;
+        if (this.isStarted()) return;
         this.timerInterval = <number><any>setInterval(() => {
             this.timerCount++;
             this.displayElement.textContent = this.getCount();
@@ -59,7 +59,7 @@ export class MinesweeperTimerElement extends HTMLElement {
     }
 
     stop() {
-        if (this.timerInterval) {
+        if (this.isStarted()) {
             clearInterval(this.timerInterval);
             this.timerInterval = 0;
         }

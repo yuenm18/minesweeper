@@ -10,6 +10,9 @@ describe('Minesweeper timer element', () => {
         minesweeperTimerElement = <MinesweeperTimerElement>document.createElement('minesweeper-timer');
         document.body.appendChild(minesweeperTimerElement);
 
+        // need to uninstall first since we're mocking setInterval
+        // https://github.com/jasmine/jasmine/issues/826#issuecomment-100028373
+        jasmine.clock().uninstall();
         jasmine.clock().install();
     });
 
@@ -20,18 +23,31 @@ describe('Minesweeper timer element', () => {
 
     it('should start timer', () => {
         expect(minesweeperTimerElement.getTime()).toBe(0);
-        jasmine.clock().tick(FIVE_SECONDS_MS);
-        expect(minesweeperTimerElement.getTime()).toBe(0);
+        spyOn(window, 'setInterval').and.callThrough();
 
         minesweeperTimerElement.start();
         jasmine.clock().tick(FIVE_SECONDS_MS);
+
         expect(minesweeperTimerElement.getTime()).toBe(FIVE_SECONDS_S);
-        expect(minesweeperTimerElement.isStarted).toBeTruthy();
+        expect(setInterval).toHaveBeenCalled();
+        expect(minesweeperTimerElement.isStarted()).toBeTruthy();
+    });
+
+    it('should not start timer if it is already started', () => {
+        minesweeperTimerElement.start();
+        spyOn(window, 'setInterval').and.callThrough();
+
+        minesweeperTimerElement.start();
+        jasmine.clock().tick(FIVE_SECONDS_MS);
+
+        expect(setInterval).not.toHaveBeenCalled();
     });
     
     it('should display counts when counting', () => {
         minesweeperTimerElement.start();
+
         jasmine.clock().tick(FIVE_SECONDS_MS);
+
         expect(minesweeperTimerElement.getTime()).toBe(FIVE_SECONDS_S);
         expect(minesweeperTimerElement.shadowRoot.getElementById('display').textContent).toBe('005');
     });
@@ -39,20 +55,20 @@ describe('Minesweeper timer element', () => {
     it('should stop timer', () => {
         minesweeperTimerElement.start();
         jasmine.clock().tick(FIVE_SECONDS_MS);
-        expect(minesweeperTimerElement.getTime()).toBe(FIVE_SECONDS_S);
         
         minesweeperTimerElement.stop();
         jasmine.clock().tick(FIVE_SECONDS_MS);
+
         expect(minesweeperTimerElement.getTime()).toBe(FIVE_SECONDS_S);
     });
 
     it('should reset timer', () => {
         minesweeperTimerElement.start();
         jasmine.clock().tick(FIVE_SECONDS_MS);
-        expect(minesweeperTimerElement.getTime()).toBe(FIVE_SECONDS_S);
         
         minesweeperTimerElement.reset();
         jasmine.clock().tick(FIVE_SECONDS_MS);
+
         expect(minesweeperTimerElement.getTime()).toBe(0);
     });
 

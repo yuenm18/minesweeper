@@ -164,7 +164,7 @@ describe('Minesweeper configuration', () => {
 
 
         it('when space key is pressed', () => {
-            const keyboardEvent = new KeyboardEvent('click', { key: ' ', bubbles: true });
+            const keyboardEvent = new KeyboardEvent('keydown', { key: ' ', bubbles: true });
 
             advancedGameOption.dispatchEvent(keyboardEvent);
 
