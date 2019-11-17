@@ -189,12 +189,23 @@ describe('Minesweeper tile element', () => {
             expect(minesweeperTileElement.isFlagged()).toBeFalsy();
         });
 
-        it('when disabled', () => {
+        it('when disabled on flag() call', () => {
             minesweeperTileElement.disable();
             const tileFlagCallback = jasmine.createSpy('tileFlagCallback');
             minesweeperTileElement.addEventListener('tile-flag', tileFlagCallback);
 
             minesweeperTileElement.flag();
+
+            expect(tileFlagCallback).not.toHaveBeenCalled();
+        });
+
+        it('when disabled on context menu', () => {
+            minesweeperTileElement.disable();
+            const contextmenuEvent = new MouseEvent('contextmenu');
+            const tileFlagCallback = jasmine.createSpy('tileFlagCallback');
+            minesweeperTileElement.addEventListener('tile-flag', tileFlagCallback);
+
+            minesweeperTileElement.dispatchEvent(contextmenuEvent);
 
             expect(tileFlagCallback).not.toHaveBeenCalled();
         });
@@ -260,12 +271,23 @@ describe('Minesweeper tile element', () => {
             expect(minesweeperTileElement.isFlagged()).toBeTruthy();
         });
 
-        it('when disabled', () => {
+        it('when disabled on flag() call', () => {
             minesweeperTileElement.disable();
             const tileUnflagCallback = jasmine.createSpy('tileFlagCallback');
             minesweeperTileElement.addEventListener('tile-unflag', tileUnflagCallback);
 
             minesweeperTileElement.unflag();
+
+            expect(tileUnflagCallback).not.toHaveBeenCalled();
+        });
+
+        it('when disabled on context menu', () => {
+            minesweeperTileElement.disable();
+            const contextmenuEvent = new MouseEvent('contextmenu');
+            const tileUnflagCallback = jasmine.createSpy('tileUnflagCallback');
+            minesweeperTileElement.addEventListener('tile-unflag', tileUnflagCallback);
+
+            minesweeperTileElement.dispatchEvent(contextmenuEvent);
 
             expect(tileUnflagCallback).not.toHaveBeenCalled();
         });

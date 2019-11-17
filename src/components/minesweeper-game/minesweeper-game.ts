@@ -32,6 +32,12 @@ template.innerHTML = `
         height: 100%;
     }
 
+    main > * {
+        overflow: auto;
+        max-height: 100%;
+        max-width: 100%;
+    }
+
     header {
         padding: 1vh;
     }

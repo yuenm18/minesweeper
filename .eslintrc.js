@@ -14,7 +14,7 @@ module.exports = {
     },
     'parser': '@typescript-eslint/parser',
     'parserOptions': {
-        'ecmaVersion': 2018,
+        'project': 'tsconfig.json',
         'sourceType': 'module'
     },
     'plugins': [
@@ -37,6 +37,6 @@ module.exports = {
         'quotes': ['error', 'single'],
         'semi': ['error', 'always'],
         'template-curly-spacing': ['error', 'never'],
-        "yoda": ['error']
+        'yoda': ['error']
     }
 };

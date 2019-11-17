@@ -45,7 +45,7 @@ describe('Minesweeper board', () => {
     });
 
     describe('should initialized board', () => {
-        it('that is 10x10 with 10 mines', () => {
+        it('that is 10x11 with 10 mines', () => {
             const width = 10, height = 11, mines = 10, total = width * height;
             minesweeperBoardElement.initializeBoard(width, height, mines);
 
@@ -86,118 +86,118 @@ describe('Minesweeper board', () => {
         });
     });
 
-    it('should reveal all mines when clicking mine', () => {
-        const width = 10, height = 10, mines = 10;
-        minesweeperBoardElement.initializeBoard(width, height, mines);
-        const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
-        const mineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine());
-        const flaggedNotMineTile = notMineTiles[0];
-        const flaggedMineTile = mineTiles[0];
-        const clickedTile = mineTiles[1];
-        const notFlaggedMineTiles = mineTiles.filter((t: MinesweeperTileElement) => t !== flaggedMineTile);
-        const clickEvent = new MouseEvent('mouseup', { bubbles: true });
-        const rightClickEvent = new MouseEvent('contextmenu', { bubbles: true });
-
-        flaggedNotMineTile.dispatchEvent(rightClickEvent);
-        flaggedMineTile.dispatchEvent(rightClickEvent);
-        clickedTile.dispatchEvent(clickEvent);
-
-        expect(flaggedNotMineTile.value).toBe('❌');
-        expect(flaggedMineTile.value).toBe('🚩');
-        expect(mineTiles.filter((t: MinesweeperTileElement) => t !== flaggedMineTile && t.value === '💣')).toEqual(notFlaggedMineTiles);
-    });
-
-    it('should reveal surrounding tiles if tile has no surrounding mines', () => {
-        const width = 10, height = 10, mines = 1;
-        minesweeperBoardElement.initializeBoard(width, height, mines);
-        const clickEvent = new MouseEvent('mouseup', { bubbles: true });
-        const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
+    describe('should reveal', () => {
+        it('all mines when clicking mine', () => {
+            const width = 10, height = 10, mines = 10;
+            minesweeperBoardElement.initializeBoard(width, height, mines);
+            const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
+            const mineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine());
+            const flaggedNotMineTile = notMineTiles[0];
+            const flaggedMineTile = mineTiles[0];
+            const clickedTile = mineTiles[1];
+            const notFlaggedMineTiles = mineTiles.filter((t: MinesweeperTileElement) => t !== flaggedMineTile);
+            const tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
+            flaggedNotMineTile.flag();
+            flaggedMineTile.flag();
+    
+            clickedTile.dispatchEvent(tileSelectEvent);
+    
+            expect(flaggedNotMineTile.value).toBe('❌');
+            expect(flaggedMineTile.value).toBe('🚩');
+            expect(mineTiles.filter((t: MinesweeperTileElement) => t !== flaggedMineTile && t.value === '💣')).toEqual(notFlaggedMineTiles);
+        });
+    
+        it('surrounding tiles if tile has no surrounding mines', () => {
+            const width = 10, height = 10, mines = 1;
+            minesweeperBoardElement.initializeBoard(width, height, mines);
+            const tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
+            const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
+    
+            let i = 0;
+            do {
+                notMineTiles[i].dispatchEvent(tileSelectEvent);
+                i++;
+            } while (notMineTiles[i].value !== '0');
+    
+            expect(notMineTiles.filter((t: MinesweeperTileElement) => t.visited).length).toBeGreaterThan(i);
+        });
         
-        let i = 0;
-        do {
-            notMineTiles[i].dispatchEvent(clickEvent);
-            i++;
-        } while (notMineTiles[i].value !== '0');
-
-        expect(notMineTiles.filter((t: MinesweeperTileElement) => t.visited).length).toBeGreaterThan(i);
-    });
-
-    it('should trigger tile-select event when clicking tiles', () => {
-        const tileSelectCallback = jasmine.createSpy('tileSelectCallback');
-        minesweeperBoardElement.addEventListener('tile-select', tileSelectCallback);
-        const width = 10, height = 10, mines = 1;
-        minesweeperBoardElement.initializeBoard(width, height, mines);
-        const clickEvent = new MouseEvent('mouseup', { bubbles: true });
-
-        const tiles = minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile');
-        tiles[0].dispatchEvent(clickEvent);
-
-        expect(tileSelectCallback).toHaveBeenCalled();
-    });
-
-    it('should trigger win when clearing all tiles', () => {
-        const wonCallback = jasmine.createSpy('wonCallback');
-        minesweeperBoardElement.addEventListener('won', wonCallback);
-        const width = 10, height = 10, mines = 1;
-        minesweeperBoardElement.initializeBoard(width, height, mines);
-        const clickEvent = new MouseEvent('mouseup', { bubbles: true });
-        const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
-
-        for (const notMineTile of notMineTiles) {
-            notMineTile.dispatchEvent(clickEvent);
-        }
-
-        expect([].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0].value).toBe('🚩');
-        expect(wonCallback).toHaveBeenCalled();
-    });
-
-    it('should trigger lose when clicking mine', () => {
-        const lostCallback = jasmine.createSpy('lostCallback');
-        minesweeperBoardElement.addEventListener('lost', lostCallback);
-        const width = 10, height = 10, mines = 1;
-        minesweeperBoardElement.initializeBoard(width, height, mines);
-        const clickEvent = new MouseEvent('mouseup', { bubbles: true });
-
-        const mineTile = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0];
-        mineTile.dispatchEvent(clickEvent);
-
-        expect(lostCallback).toHaveBeenCalled();
-    });
-
-    it('should not do anything when clicking tiles after winning or losing', () => {
-        const wonCallback = jasmine.createSpy('wonCallback');
-        const lostCallback = jasmine.createSpy('lostCallback');
-        const tileSelectCallback = jasmine.createSpy('tileSelectCallback');
-        const flagCallback = jasmine.createSpy('flagCallback');
-        const unflagCallback = jasmine.createSpy('unflagCallback');
-        minesweeperBoardElement.addEventListener('won', wonCallback);
-        minesweeperBoardElement.addEventListener('lost', lostCallback);
-        minesweeperBoardElement.addEventListener('tile-select', tileSelectCallback);
-        minesweeperBoardElement.addEventListener('tile-flag', flagCallback);
-        minesweeperBoardElement.addEventListener('tile-unflag', unflagCallback);
-
-        const width = 1, height = 2, mines = 1;
-        minesweeperBoardElement.initializeBoard(width, height, mines);
-
-        const clickEvent = new MouseEvent('mouseup', {
-            bubbles: true
+        it('not all tiles when one is clicked', () => {
+            const width = 10, height = 10, mines = 98;
+            minesweeperBoardElement.initializeBoard(width, height, mines);
+            const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
+            const clickedTile = notMineTiles[0];
+            const tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
+            const wonCallback = jasmine.createSpy('wonCallback');
+            minesweeperBoardElement.addEventListener('won', wonCallback);
+    
+            clickedTile.dispatchEvent(tileSelectEvent);
+    
+            expect(wonCallback).not.toHaveBeenCalled();
         });
-        const leftClickEvent = new MouseEvent('contextmenu', {
-            bubbles: true
+    });
+
+    describe('should trigger', () => {
+        let tileSelectEvent: CustomEvent;
+
+        beforeEach(() => {
+            const width = 10, height = 10, mines = 1;
+            minesweeperBoardElement.initializeBoard(width, height, mines);
+            tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
         });
 
-        const mineTile = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0];
-        const notMineTile = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine())[0];
-        notMineTile.dispatchEvent(clickEvent);
+        it('should trigger win when clearing all tiles', () => {
+            const wonCallback = jasmine.createSpy('wonCallback');
+            minesweeperBoardElement.addEventListener('won', wonCallback);
+            const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
+    
+            for (const notMineTile of notMineTiles) {
+                notMineTile.dispatchEvent(tileSelectEvent);
+            }
+    
+            expect([].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0].value).toBe('🚩');
+            expect(wonCallback).toHaveBeenCalled();
+        });
+    
+        it('should trigger lose when clicking mine', () => {
+            const lostCallback = jasmine.createSpy('lostCallback');
+            minesweeperBoardElement.addEventListener('lost', lostCallback);
+    
+            const mineTile = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0];
+            mineTile.dispatchEvent(tileSelectEvent);
+    
+            expect(lostCallback).toHaveBeenCalled();
+        });
+    });
 
-        expect(tileSelectCallback).toHaveBeenCalledTimes(1);
-        expect(wonCallback).toHaveBeenCalled();
+    describe('should set all tiles to disabled after', () => {
+        let tiles: NodeList;
+        let tileSelectEvent: CustomEvent;
 
-        notMineTile.dispatchEvent(clickEvent);
-        mineTile.dispatchEvent(clickEvent);
-        mineTile.dispatchEvent(leftClickEvent);
-        notMineTile.dispatchEvent(leftClickEvent);
-        expect(tileSelectCallback).toHaveBeenCalledTimes(1);
+        beforeEach(() => {
+            const width = 1, height = 2, mines = 1;
+            minesweeperBoardElement.initializeBoard(width, height, mines);
+            tiles = minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile');
+            tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
+        });
+
+        it('losing', () => {
+            const notMineTile = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine())[0];
+
+            // trigger lose
+            notMineTile.dispatchEvent(tileSelectEvent);
+
+            tiles.forEach(t => expect((<MinesweeperTileElement>t).isDisabled()).toBeTruthy());
+        });
+
+        it('winning', () => {
+            const mineTile = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0];
+
+            // trigger win
+            mineTile.dispatchEvent(tileSelectEvent);
+
+            tiles.forEach(t => expect((<MinesweeperTileElement>t).isDisabled()).toBeTruthy());
+        });
     });
 
     it('should not error if trying to navigate when element is not focused', () => {
