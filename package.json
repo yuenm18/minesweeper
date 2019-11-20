@@ -8,6 +8,7 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "lighthouse": "lhci autorun",
     "lint": "eslint **/*.ts",
+    "lint-fix": "eslint **/*.ts --fix",
     "serve": "npm run build && serve dist",
     "start": "webpack-dev-server --config webpack.dev.js --color --progress",
     "test": "karma start",

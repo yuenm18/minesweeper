@@ -125,14 +125,26 @@ describe('Minesweeper game', () => {
         expect(minesweeperRemainingMinesElement.increase).toHaveBeenCalled();
     });
 
-    it('should display surprise after receiving mousedown event from board', () => {
-        const mousedownEvent = new MouseEvent('mousedown', { bubbles: true });
-        const tileSelectedEvent = new CustomEvent('tile-select', { bubbles: true });
+    describe('should display surprise after receiving mousedown event from board', () => {
+        let mousedownEvent: MouseEvent;
+        beforeEach(() => {
+            mousedownEvent = new MouseEvent('mousedown', { bubbles: true });
+        });
 
-        minesweeperBoardElement.dispatchEvent(tileSelectedEvent);
-        minesweeperBoardElement.dispatchEvent(mousedownEvent);
+        it('when in "started" state', () => {
+            minesweeperBoardElement.dispatchEvent(mousedownEvent);
 
-        expect(minesweeperConfigurationElement.displaySurprise).toHaveBeenCalled();
+            expect(minesweeperConfigurationElement.displaySurprise).toHaveBeenCalled();
+        });
+
+        it('when in "in progress" state', () => {
+            const tileSelectedEvent = new CustomEvent('tile-select', { bubbles: true });
+
+            minesweeperBoardElement.dispatchEvent(tileSelectedEvent);
+            minesweeperBoardElement.dispatchEvent(mousedownEvent);
+
+            expect(minesweeperConfigurationElement.displaySurprise).toHaveBeenCalled();
+        });
     });
 
     it('should not display surprise after receiving mousedown event form board if game is over', () => {
@@ -155,14 +167,27 @@ describe('Minesweeper game', () => {
         expect(minesweeperConfigurationElement.displayHappy).not.toHaveBeenCalled();
     });
 
-    it('should display happy after receiving mouseup event from board', () => {
-        const mouseupEvent = new MouseEvent('mouseup', { bubbles: true });
-        const tileSelectedEvent = new CustomEvent('tile-select', { bubbles: true });
+    describe('should display happy after receiving mouseup event from board', () => {
+        let mouseupEvent: MouseEvent;
 
-        minesweeperBoardElement.dispatchEvent(tileSelectedEvent);
-        minesweeperBoardElement.dispatchEvent(mouseupEvent);
+        beforeEach(() => {
+            mouseupEvent = new MouseEvent('mouseup', { bubbles: true });
+        });
 
-        expect(minesweeperConfigurationElement.displayHappy).toHaveBeenCalled();
+        it('when in "started" state', () => {
+            minesweeperBoardElement.dispatchEvent(mouseupEvent);
+
+            expect(minesweeperConfigurationElement.displayHappy).toHaveBeenCalled();
+        });
+
+        it('when in "in progress" state', () => {
+            const tileSelectedEvent = new CustomEvent('tile-select', { bubbles: true });
+
+            minesweeperBoardElement.dispatchEvent(tileSelectedEvent);
+            minesweeperBoardElement.dispatchEvent(mouseupEvent);
+
+            expect(minesweeperConfigurationElement.displayHappy).toHaveBeenCalled();
+        });
     });
 
     it('should not update high score if current time is less than high score', () => {

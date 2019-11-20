@@ -76,18 +76,18 @@ export class MinesweeperGameElement extends HTMLElement {
             this.setStateLost();
         });
 
-        // only set the display to surprise when the game is in progress
+        // only set the display to surprise when the game is in progress or started (before the first click)
         // because the display reflects the result of the game when the game is over
         this.boardElement.addEventListener('mousedown', (e: MouseEvent) => {
-            if (this.gameState === 'in progress') {
+            if (this.gameState === 'started' || this.gameState === 'in progress') {
                 this.configurationElement.displaySurprise();
             }
         });
 
-        // only set the display to surprise when the game is in progress
+        // only set the display to surprise when the game is in progress (before the first click)
         // because the display reflects the result of the game when the game is over
         this.boardElement.addEventListener('mouseup', (e: MouseEvent) => {
-            if (this.gameState === 'in progress') {
+            if (this.gameState === 'started' || this.gameState === 'in progress') {
                 this.configurationElement.displayHappy();
             }
         });
