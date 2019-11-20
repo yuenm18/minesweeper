@@ -23,10 +23,6 @@ export class MinesweeperBoardElement extends HTMLElement {
     private board: HTMLElement;
     private tiles: Array<MinesweeperTileElement>;
 
-    static get observedAttributes() {
-        return ['width', 'height', 'mines'];
-    }
-
     get mines(): number {
         return +this.getAttribute('mines');
     }
@@ -59,7 +55,8 @@ export class MinesweeperBoardElement extends HTMLElement {
 
         this.board = this.shadowRoot.getElementById('board');
 
-        this.shadowRoot.addEventListener('tile-select', e => {
+        // reveal the selected tile and emit won or lost events the tile selected resulting in the player winning or losing the game
+        this.shadowRoot.addEventListener('tile-select', (e: CustomEvent) => {
             const minesweeperTile: MinesweeperTileElement = <MinesweeperTileElement>e.target;
             const lost = this.revealTiles(minesweeperTile);
             if (lost) {
@@ -72,7 +69,7 @@ export class MinesweeperBoardElement extends HTMLElement {
         });
 
         // allow navigation through the board with arrow keys
-        this.addEventListener('keydown', e => {
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
             const focusedElement = this.shadowRoot.activeElement;
             if (focusedElement && focusedElement.constructor === MinesweeperTileElement) {
                 const focusedElementIndex = this.tiles.findIndex(t => t === focusedElement);
@@ -99,20 +96,18 @@ export class MinesweeperBoardElement extends HTMLElement {
         });
 
         // prevent showing context menu if the user misflags a tile
-        this.addEventListener('contextmenu', e => {
+        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
             e.preventDefault();
         });
     }
 
-    connectedCallback(): void {
-        this.width = +this.getAttribute('width');
-        this.height = +this.getAttribute('height');
-        this.mines = +this.getAttribute('mines');
-    }
-
-    attributeChangedCallback(attrName: string, oldVal: string, newVal: string): void {
-    }
-
+    /**
+     * Initializes the minesweeper board
+     *
+     * @param boardWidth The width of the board
+     * @param boardHeight The height of the board
+     * @param numMines The number of mines in the board
+     */
     initializeBoard(boardWidth: number = this.width, boardHeight: number = this.height, numMines: number = this.mines): void {
         if (numMines > boardWidth * boardHeight) {
             console.error(`${numMines} mines is greater than the number of places in a ${boardWidth} x ${boardHeight} board`);
@@ -127,6 +122,7 @@ export class MinesweeperBoardElement extends HTMLElement {
             this.board.removeChild(this.board.firstChild);
         }
 
+        // add generate a width by height grid
         this.tiles = [];
         for (let i = 0; i < this.height; i++) {
             const tr = document.createElement('tr');
@@ -144,6 +140,7 @@ export class MinesweeperBoardElement extends HTMLElement {
             this.board.appendChild(tr);
         }
 
+        // put mines in random tiles
         let numMinesPlaced = 0;
         while (numMinesPlaced < this.mines) {
             const index = Math.floor(Math.random() * (this.width * this.height));
@@ -154,6 +151,13 @@ export class MinesweeperBoardElement extends HTMLElement {
         }
     }
 
+    /**
+     * Runs a function on all tiles surrounding a given tile
+     *
+     * @param x the x coordinate of the tile
+     * @param y the y coordinate of the tile
+     * @param fn the function to run on the surrounding tiles
+     */
     private checkSurroundingTiles(x: number, y: number, fn: Function): void {
         if (x - 1 >= 0) fn(x - 1, y);
         if (x - 1 >= 0 && y - 1 >= 0) fn(x - 1, y - 1);
@@ -165,10 +169,18 @@ export class MinesweeperBoardElement extends HTMLElement {
         if (x + 1 < this.height && y + 1 < this.width) fn(x + 1, y + 1);
     }
 
+    /**
+     * Determines if the game is finished or not
+     *
+     * @returns True if all tiles that are not mines are visited
+     */
     private isGameFinished(): boolean {
         return this.tiles.every(tile => tile.isMine() || tile.visited);
     }
 
+    /**
+     * Flags all tiles that are mines and not flagged
+     */
     private flagAllMines(): void {
         this.tiles.forEach(tile => {
             if (tile.isMine() && !tile.isFlagged()) {
@@ -179,6 +191,12 @@ export class MinesweeperBoardElement extends HTMLElement {
         });
     }
 
+    /**
+     * Reveal all mines
+     * 1. Disable all tiles
+     * 2. Show mines that are not flagged that are mines
+     * 3. Show X for tiles that are flagged that are not mines
+     */
     private revealAllMines(): void {
         this.tiles.forEach(tile => {
             if (tile.isMine() && !tile.isFlagged()) {
@@ -193,10 +211,17 @@ export class MinesweeperBoardElement extends HTMLElement {
         });
     }
 
+    /**
+     * Reveals mines from a click
+     *
+     * @param tile The tile that was clicked
+     * @returns true if the tile was a mine or false if not
+     */
     private revealTiles(tile: MinesweeperTileElement): boolean {
         const tilesToCheck: Array<MinesweeperTileElement> = [];
         tilesToCheck.push(tile);
 
+        // Do a DFS to reveal the tile and surrounding tiles if the tiles have zero surrounding mines
         while (tilesToCheck.length) {
             const tile = tilesToCheck.pop();
             if (tile.visited || tile.isFlagged()) {

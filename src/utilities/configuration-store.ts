@@ -30,6 +30,12 @@ export class ConfigurationStore {
 
     private static LOCAL_STORAGE_KEY = 'minesweeper_configuration';
 
+    /**
+     * Gets the configurations
+     * If no configurations exist then seed local storage with the default configurations
+     *
+     * @returns The list of configurations
+     */
     static getConfigurations(): Array<Configuration> {
         const configurations = this.getConfigurationsFromLocalStorage();
         if (!configurations) {
@@ -39,13 +45,23 @@ export class ConfigurationStore {
         return configurations || this.defaultConfigurations;
     }
 
+    /**
+     * Gets the current configuration (currently the first one)
+     *
+     * @returns The current configuration
+     */
     static getCurrentConfiguration(): Configuration {
         return this.defaultConfigurations[0];
     }
 
-    static addOrUpdateConfiguration(configuration: Configuration): void {  
+    /**
+     * Adds or updates a configuration
+     *
+     * @param configuration The configuration to add or update
+     */
+    static addOrUpdateConfiguration(configuration: Configuration): void {
         const configurations = this.getConfigurationsFromLocalStorage() || [];
-        
+
         const index = configurations.findIndex(c => c.id === configuration.id);
         if (index !== -1) {
             configurations.splice(index, 1, configuration);
@@ -55,7 +71,12 @@ export class ConfigurationStore {
 
         this.writeConfigurationsToLocalStorage(configurations);
     }
-    
+
+    /**
+     * Gets the list of configurations from local storage
+     *
+     * @returns The list of configurations stored in local storage or null if it doesn't exist
+     */
     private static getConfigurationsFromLocalStorage(): Array<Configuration> {
         const configuration = localStorage.getItem(this.LOCAL_STORAGE_KEY);
         try {
@@ -69,6 +90,11 @@ export class ConfigurationStore {
         }
     }
 
+    /**
+     * Writes a list of configurations to local storage
+     *
+     * @param configurations The list of configurations
+     */
     private static writeConfigurationsToLocalStorage(configurations: Array<Configuration>): void {
         localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(configurations));
     }

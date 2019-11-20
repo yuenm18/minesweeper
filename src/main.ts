@@ -5,7 +5,7 @@ import './components/minesweeper-timer/minesweeper-timer';
 import './components/minesweeper-remaining-mines/minesweeper-remaining-mines';
 import './components/minesweeper-configuration/minesweeper-configuration';
 
-function main() {
+function main(): void {
     const minesweeper = document.createElement('minesweeper-game');
     document.getElementById('minesweeper').appendChild(minesweeper);
 }

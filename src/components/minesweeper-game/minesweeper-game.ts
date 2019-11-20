@@ -72,33 +72,21 @@ export class MinesweeperGameElement extends HTMLElement {
         this.configurationElement = <MinesweeperConfigurationElement>this.shadowRoot.getElementById('configuration');
         this.timerElement = <MinesweeperTimerElement>this.shadowRoot.getElementById('timer');
 
-        this.boardElement.addEventListener('won', e => {
-            this.setStateWon();
-        });
-
-        this.boardElement.addEventListener('tile-select', e => {
-            this.setStateInProgress();
-        });
-
-        this.boardElement.addEventListener('lost', e => {
+        this.boardElement.addEventListener('lost', (e: CustomEvent) => {
             this.setStateLost();
         });
 
-        this.boardElement.addEventListener('tile-flag', e => {
-            this.remainingMinesElement.decrease();
-        });
-
-        this.boardElement.addEventListener('tile-unflag', e => {
-            this.remainingMinesElement.increase();
-        });
-
-        this.boardElement.addEventListener('mousedown', e => {
+        // only set the display to surprise when the game is in progress
+        // because the display reflects the result of the game when the game is over
+        this.boardElement.addEventListener('mousedown', (e: MouseEvent) => {
             if (this.gameState === 'in progress') {
                 this.configurationElement.displaySurprise();
             }
         });
 
-        this.boardElement.addEventListener('mouseup', e => {
+        // only set the display to surprise when the game is in progress
+        // because the display reflects the result of the game when the game is over
+        this.boardElement.addEventListener('mouseup', (e: MouseEvent) => {
             if (this.gameState === 'in progress') {
                 this.configurationElement.displayHappy();
             }
@@ -106,10 +94,33 @@ export class MinesweeperGameElement extends HTMLElement {
 
         this.configurationElement.addEventListener('new-game', (e: CustomEvent) => {
             this.configuration = <Configuration>e.detail;
+
+            // need to change state in setTimeout() because this code is called synchonously before
+            // the game state's child elements are created.  Change state needs to be called after all child
+            // elements are created
             setTimeout(() => this.setStateStarted());
+        });
+
+        this.boardElement.addEventListener('tile-flag', (e: CustomEvent) => {
+            this.remainingMinesElement.decrease();
+        });
+
+        this.boardElement.addEventListener('tile-select', (e: CustomEvent) => {
+            this.setStateInProgress();
+        });
+
+        this.boardElement.addEventListener('tile-unflag', (e: CustomEvent) => {
+            this.remainingMinesElement.increase();
+        });
+
+        this.boardElement.addEventListener('won', (e: CustomEvent) => {
+            this.setStateWon();
         });
     }
 
+    /**
+     * Sets the state to started
+     */
     private setStateStarted(): void {
         this.boardElement.initializeBoard(this.configuration.width, this.configuration.height, this.configuration.mines);
         this.gameState = 'started';
@@ -118,8 +129,13 @@ export class MinesweeperGameElement extends HTMLElement {
         this.remainingMinesElement.reset(this.configuration.mines);
     }
 
+    /**
+     * Sets the state to in progress
+     */
     private setStateInProgress(): void {
+        // can only go into in progress state from started state
         if (this.gameState !== 'started') { return; }
+
         this.gameState = 'in progress';
         if (!this.timerElement.isStarted()) {
             this.timerElement.start();
@@ -128,6 +144,9 @@ export class MinesweeperGameElement extends HTMLElement {
         this.configurationElement.displayHappy();
     }
 
+    /**
+     * Sets the state to won
+     */
     private setStateWon(): void {
         this.gameState = 'won';
         this.timerElement.stop();
@@ -139,6 +158,9 @@ export class MinesweeperGameElement extends HTMLElement {
         }
     }
 
+    /**
+     * Sets the state to lost
+     */
     private setStateLost(): void {
         this.gameState = 'lost';
         this.timerElement.stop();

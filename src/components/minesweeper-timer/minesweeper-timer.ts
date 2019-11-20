@@ -35,41 +35,70 @@ export class MinesweeperTimerElement extends HTMLElement {
         this.timerCount = 0;
     }
 
-    disconnectedCallback() {
+    /**
+     * The disconnected callback
+     */
+    disconnectedCallback(): void {
         this.stop();
     }
 
+    /**
+     * Whether or not the timer has started
+     *
+     * @returns true if the timer has started, false otherwise
+     */
     isStarted(): boolean {
         return !!this.timerInterval;
     }
 
-    reset() {
+    /**
+     * Resets the timer
+     */
+    reset(): void {
         this.stop();
 
         this.timerCount = 0;
         this.displayElement.textContent = this.getCount();
     }
 
-    start() {
+    /**
+     * Starts the timer
+     * If the timer has already started then do nothing
+     */
+    start(): void {
         if (this.isStarted()) return;
+
         this.timerInterval = <number><any>setInterval(() => {
             this.timerCount++;
             this.displayElement.textContent = this.getCount();
         }, ONE_SECOND_MS);
     }
 
-    stop() {
+    /**
+     * Stops the timer
+     */
+    stop(): void {
         if (this.isStarted()) {
             clearInterval(this.timerInterval);
             this.timerInterval = 0;
         }
     }
 
-    getTime() {
+    /**
+     * Gets the current time on the timer
+     *
+     * @returns the timer's count
+     */
+    getTime(): number {
         return this.timerCount;
     }
 
-    private getCount() {
+    /**
+     * Formats the current timer count
+     *
+     * @returns The formatted timer count
+     */
+    private getCount(): string {
         return String(this.timerCount).padStart(DISPLAY_DIGITS, '0');
     }
 }

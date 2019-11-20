@@ -39,7 +39,7 @@ describe('Minesweeper board', () => {
     it('should not show contextmenu', () => {
         const contextmenuEvent = new MouseEvent('contextmenu', { cancelable: true });
 
-        minesweeperBoardElement.dispatchEvent(contextmenuEvent);
+        minesweeperBoardElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
         expect(contextmenuEvent.defaultPrevented).toBeTruthy();
     });
@@ -99,29 +99,29 @@ describe('Minesweeper board', () => {
             const tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
             flaggedNotMineTile.flag();
             flaggedMineTile.flag();
-    
+
             clickedTile.dispatchEvent(tileSelectEvent);
-    
+
             expect(flaggedNotMineTile.value).toBe('❌');
             expect(flaggedMineTile.value).toBe('🚩');
             expect(mineTiles.filter((t: MinesweeperTileElement) => t !== flaggedMineTile && t.value === '💣')).toEqual(notFlaggedMineTiles);
         });
-    
+
         it('surrounding tiles if tile has no surrounding mines', () => {
             const width = 10, height = 10, mines = 1;
             minesweeperBoardElement.initializeBoard(width, height, mines);
             const tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
             const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
-    
+
             let i = 0;
             do {
                 notMineTiles[i].dispatchEvent(tileSelectEvent);
                 i++;
             } while (notMineTiles[i].value !== '0');
-    
+
             expect(notMineTiles.filter((t: MinesweeperTileElement) => t.visited).length).toBeGreaterThan(i);
         });
-        
+
         it('not all tiles when one is clicked', () => {
             const width = 10, height = 10, mines = 98;
             minesweeperBoardElement.initializeBoard(width, height, mines);
@@ -130,9 +130,9 @@ describe('Minesweeper board', () => {
             const tileSelectEvent = new CustomEvent('tile-select', { bubbles: true, composed: true });
             const wonCallback = jasmine.createSpy('wonCallback');
             minesweeperBoardElement.addEventListener('won', wonCallback);
-    
+
             clickedTile.dispatchEvent(tileSelectEvent);
-    
+
             expect(wonCallback).not.toHaveBeenCalled();
         });
     });
@@ -150,22 +150,22 @@ describe('Minesweeper board', () => {
             const wonCallback = jasmine.createSpy('wonCallback');
             minesweeperBoardElement.addEventListener('won', wonCallback);
             const notMineTiles = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => !t.isMine());
-    
+
             for (const notMineTile of notMineTiles) {
                 notMineTile.dispatchEvent(tileSelectEvent);
             }
-    
+
             expect([].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0].value).toBe('🚩');
             expect(wonCallback).toHaveBeenCalled();
         });
-    
+
         it('should trigger lose when clicking mine', () => {
             const lostCallback = jasmine.createSpy('lostCallback');
             minesweeperBoardElement.addEventListener('lost', lostCallback);
-    
+
             const mineTile = [].filter.call(minesweeperBoardElement.shadowRoot.querySelectorAll('minesweeper-tile'), (t: MinesweeperTileElement) => t.isMine())[0];
             mineTile.dispatchEvent(tileSelectEvent);
-    
+
             expect(lostCallback).toHaveBeenCalled();
         });
     });
@@ -205,7 +205,7 @@ describe('Minesweeper board', () => {
             key: 'ArrowUp'
         });
 
-        expect(() => minesweeperBoardElement.dispatchEvent(arrowUpKeyEvent)).not.toThrow();
+        expect(() => minesweeperBoardElement.shadowRoot.dispatchEvent(arrowUpKeyEvent)).not.toThrow();
     });
 
     describe('should navigate', () => {
@@ -220,7 +220,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowUp'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowUpKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowUpKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
         });
@@ -231,7 +231,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowUp'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowUpKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowUpKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="2"][y="0"]'));
         });
@@ -242,7 +242,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowRight'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowRightKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowRightKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="1"]'));
         });
@@ -253,7 +253,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowRight'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowRightKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowRightKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
         });
@@ -264,7 +264,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowDown'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowDownKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowDownKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="1"][y="0"]'));
         });
@@ -275,7 +275,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowDown'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowDownKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowDownKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
         });
@@ -286,7 +286,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowLeft'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowLeftKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowLeftKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="0"]'));
         });
@@ -297,7 +297,7 @@ describe('Minesweeper board', () => {
                 key: 'ArrowLeft'
             });
 
-            minesweeperBoardElement.dispatchEvent(arrowLeftKeyEvent);
+            minesweeperBoardElement.shadowRoot.dispatchEvent(arrowLeftKeyEvent);
 
             expect(minesweeperBoardElement.shadowRoot.activeElement).toBe(minesweeperBoardElement.shadowRoot.querySelector('minesweeper-tile[x="0"][y="2"]'));
         });

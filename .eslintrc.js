@@ -31,6 +31,7 @@ module.exports = {
         'no-multi-spaces': ['error'],
         'no-unused-vars': ['off'],
         'no-tabs': ['error'],
+        'no-trailing-spaces': ['error'],
         'object-curly-spacing': ['error', 'always'],
         'prefer-arrow-callback': ['error'],
         'prefer-const': ['error'],

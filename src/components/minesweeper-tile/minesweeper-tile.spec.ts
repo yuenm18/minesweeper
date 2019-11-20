@@ -2,14 +2,16 @@ import { MinesweeperTileElement } from './minesweeper-tile';
 
 describe('Minesweeper tile element', () => {
     let minesweeperTileElement: MinesweeperTileElement;
+    let boardElement: HTMLElement;
 
     beforeEach(() => {
         minesweeperTileElement = <MinesweeperTileElement>document.createElement('minesweeper-tile');
+        boardElement = minesweeperTileElement.shadowRoot.getElementById('display');
         document.body.appendChild(minesweeperTileElement);
     });
 
     it('should be an instance of a minesweeper tile', () => {
-        const element = document.querySelector('minesweeper-tile');        
+        const element = document.querySelector('minesweeper-tile');
         expect(element.constructor.name).toBe(MinesweeperTileElement.name);
     });
 
@@ -17,22 +19,18 @@ describe('Minesweeper tile element', () => {
         const x = 1, y = 2, value = '3';
         minesweeperTileElement.x = x;
         minesweeperTileElement.y = y;
-        minesweeperTileElement.value = value;
 
         expect(minesweeperTileElement.getAttribute('x')).toEqual(String(x));
         expect(minesweeperTileElement.getAttribute('y')).toEqual(String(y));
-        expect(minesweeperTileElement.getAttribute('value')).toEqual(value);
     });
 
     it('should reflect attributes to properties', () => {
         const x = 1, y = 2, value = '3';
         minesweeperTileElement.setAttribute('x', String(x));
         minesweeperTileElement.setAttribute('y', String(y));
-        minesweeperTileElement.setAttribute('value', value);
 
         expect(minesweeperTileElement.x).toEqual(x);
         expect(minesweeperTileElement.y).toEqual(y);
-        expect(minesweeperTileElement.value).toEqual(value);
     });
 
     describe('should not focus', () => {
@@ -51,10 +49,22 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseDownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseDownEvent);
 
             expect(document.activeElement).not.toBe(minesweeperTileElement);
         });
+
+        it('when tabindex is initially set to -1', () => {
+            const minesweeperTileElement = <MinesweeperTileElement>document.createElement('minesweeper-tile');
+            minesweeperTileElement.setAttribute('tabindex', '-1');
+            document.body.appendChild(minesweeperTileElement);
+
+            minesweeperTileElement.focus();
+
+            expect(minesweeperTileElement.getAttribute('tabindex')).toBe('-1');
+            document.body.removeChild(minesweeperTileElement);
+        });
+
     });
 
     describe('should be pressed', () => {
@@ -64,9 +74,9 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseDownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseDownEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeTruthy();
+            expect(boardElement.hasAttribute('pressed')).toBeTruthy();
         });
 
         it('on mouse over', () => {
@@ -75,20 +85,20 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseOverEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOverEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeTruthy();
+            expect(boardElement.hasAttribute('pressed')).toBeTruthy();
         });
     });
 
     describe('should not be pressed', () => {
         it('on mouse out', () => {
-            minesweeperTileElement.setAttribute('pressed', '');
+            boardElement.setAttribute('pressed', '');
             const mouseOutEvent = new MouseEvent('mouseout');
 
-            minesweeperTileElement.dispatchEvent(mouseOutEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOutEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeFalsy();
+            expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
 
         it('mouse over when disabled', () => {
@@ -98,9 +108,9 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseOverEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOverEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeFalsy();
+            expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
 
         it('on mouse down when disabled', () => {
@@ -110,9 +120,9 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mousedownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mousedownEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeFalsy();
+            expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
 
         it('on mouse over when flagged', () => {
@@ -122,17 +132,17 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseOverEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOverEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeFalsy();
+            expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
 
         it('on mouse out when flagged', () => {
             minesweeperTileElement.flag();
             const mouseOutEvent = new MouseEvent('mouseout');
-            minesweeperTileElement.dispatchEvent(mouseOutEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOutEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeFalsy();
+            expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
 
         it('on mouse down when flagged', () => {
@@ -142,9 +152,9 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseDownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseDownEvent);
 
-            expect(minesweeperTileElement.hasAttribute('pressed')).toBeFalsy();
+            expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
     });
 
@@ -157,7 +167,7 @@ describe('Minesweeper tile element', () => {
 
             expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBe('🚩');
             expect(minesweeperTileElement.value).toBe('🚩');
-            expect(minesweeperTileElement.getAttribute('value')).toBe('🚩');
+            expect(boardElement.getAttribute('value')).toBe('🚩');
             expect(minesweeperTileElement.isFlagged()).toBeTruthy();
             expect(tileFlagCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, cancelable: true, composed: true }));
         });
@@ -165,7 +175,7 @@ describe('Minesweeper tile element', () => {
         it('on context menu', () => {
             const contextmenuEvent = new MouseEvent('contextmenu');
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeTruthy();
         });
@@ -173,7 +183,7 @@ describe('Minesweeper tile element', () => {
         it('when pressing "f" key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'f' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeTruthy();
         });
@@ -205,7 +215,7 @@ describe('Minesweeper tile element', () => {
             const tileFlagCallback = jasmine.createSpy('tileFlagCallback');
             minesweeperTileElement.addEventListener('tile-flag', tileFlagCallback);
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(tileFlagCallback).not.toHaveBeenCalled();
         });
@@ -234,7 +244,7 @@ describe('Minesweeper tile element', () => {
 
             expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBeFalsy();
             expect(minesweeperTileElement.value).toBeFalsy();
-            expect(minesweeperTileElement.getAttribute('value')).toBeFalsy();
+            expect(boardElement.getAttribute('value')).toBeFalsy();
             expect(minesweeperTileElement.isFlagged()).toBeFalsy();
             expect(tileUnflagCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, cancelable: true, composed: true }));
         });
@@ -242,7 +252,7 @@ describe('Minesweeper tile element', () => {
         it('on context menu', () => {
             const contextmenuEvent = new MouseEvent('contextmenu');
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeFalsy();
         });
@@ -250,7 +260,7 @@ describe('Minesweeper tile element', () => {
         it('when pressing "f" key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'f' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeFalsy();
         });
@@ -287,7 +297,7 @@ describe('Minesweeper tile element', () => {
             const tileUnflagCallback = jasmine.createSpy('tileUnflagCallback');
             minesweeperTileElement.addEventListener('tile-unflag', tileUnflagCallback);
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(tileUnflagCallback).not.toHaveBeenCalled();
         });
@@ -315,7 +325,7 @@ describe('Minesweeper tile element', () => {
             const mouseupEvent = new MouseEvent('mouseup');
             Object.defineProperty(mouseupEvent, 'which', { value: 1 });
 
-            minesweeperTileElement.dispatchEvent(mouseupEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseupEvent);
 
             expect(tileSelectCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, composed: true }));
         });
@@ -323,7 +333,7 @@ describe('Minesweeper tile element', () => {
         it('on space key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: ' ' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(tileSelectCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, composed: true }));
         });
@@ -331,7 +341,7 @@ describe('Minesweeper tile element', () => {
         it('on enter key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'Enter' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(tileSelectCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, composed: true }));
         });
@@ -350,7 +360,7 @@ describe('Minesweeper tile element', () => {
         it('when tile is disabled', () => {
             minesweeperTileElement.disable();
 
-            minesweeperTileElement.dispatchEvent(mouseUpEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseUpEvent);
 
             expect(tileSelectCallback).not.toHaveBeenCalled();
         });
@@ -358,7 +368,7 @@ describe('Minesweeper tile element', () => {
         it('when tile is flagged', () => {
             minesweeperTileElement.flag();
 
-            minesweeperTileElement.dispatchEvent(mouseUpEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseUpEvent);
 
             expect(tileSelectCallback).not.toHaveBeenCalled();
         });
@@ -366,8 +376,8 @@ describe('Minesweeper tile element', () => {
         it('when clicked with right mouse button', () => {
             const mouseupEvent = new MouseEvent('mouseup');
             Object.defineProperty(mouseupEvent, 'which', { value: 2 });
-            
-            minesweeperTileElement.dispatchEvent(mouseupEvent);
+
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseupEvent);
 
             expect(tileSelectCallback).not.toHaveBeenCalled();
         });
@@ -379,9 +389,9 @@ describe('Minesweeper tile element', () => {
 
             expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBe('💣');
             expect(minesweeperTileElement.value).toBe('💣');
-            expect(minesweeperTileElement.getAttribute('value')).toBe('💣');
-            expect(minesweeperTileElement.hasAttribute('exploded')).toBeFalsy();
-            expect(minesweeperTileElement.hasAttribute('visited')).toBeTruthy();
+            expect(boardElement.getAttribute('value')).toBe('💣');
+            expect(boardElement.hasAttribute('exploded')).toBeFalsy();
+            expect(boardElement.hasAttribute('visited')).toBeTruthy();
             expect(minesweeperTileElement.visited).toBeTruthy();
             expect(minesweeperTileElement.isDisabled()).toBeTruthy();
         });
@@ -391,9 +401,9 @@ describe('Minesweeper tile element', () => {
 
             expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBe('💣');
             expect(minesweeperTileElement.value).toBe('💣');
-            expect(minesweeperTileElement.getAttribute('value')).toBe('💣');
-            expect(minesweeperTileElement.hasAttribute('exploded')).toBeTruthy();
-            expect(minesweeperTileElement.hasAttribute('visited')).toBeTruthy();
+            expect(boardElement.getAttribute('value')).toBe('💣');
+            expect(boardElement.hasAttribute('exploded')).toBeTruthy();
+            expect(boardElement.hasAttribute('visited')).toBeTruthy();
             expect(minesweeperTileElement.visited).toBeTruthy();
             expect(minesweeperTileElement.isDisabled()).toBeTruthy();
         });
@@ -403,8 +413,8 @@ describe('Minesweeper tile element', () => {
 
             expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBe('❌');
             expect(minesweeperTileElement.value).toBe('❌');
-            expect(minesweeperTileElement.getAttribute('value')).toBe('❌');
-            expect(minesweeperTileElement.hasAttribute('visited')).toBeTruthy();
+            expect(boardElement.getAttribute('value')).toBe('❌');
+            expect(boardElement.hasAttribute('visited')).toBeTruthy();
             expect(minesweeperTileElement.visited).toBeTruthy();
             expect(minesweeperTileElement.isDisabled()).toBeTruthy();
         });
@@ -415,8 +425,8 @@ describe('Minesweeper tile element', () => {
 
             expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBe(String(tileCount));
             expect(minesweeperTileElement.value).toBe(String(tileCount));
-            expect(minesweeperTileElement.getAttribute('value')).toBe(String(tileCount));
-            expect(minesweeperTileElement.hasAttribute('visited')).toBeTruthy();
+            expect(boardElement.getAttribute('value')).toBe(String(tileCount));
+            expect(boardElement.hasAttribute('visited')).toBeTruthy();
             expect(minesweeperTileElement.visited).toBeTruthy();
             expect(minesweeperTileElement.isDisabled()).toBeTruthy();
         });
@@ -426,8 +436,8 @@ describe('Minesweeper tile element', () => {
 
             expect(minesweeperTileElement.shadowRoot.getElementById('display').textContent).toBeFalsy();
             expect(minesweeperTileElement.value).toBe('0');
-            expect(minesweeperTileElement.getAttribute('value')).toBe('0');
-            expect(minesweeperTileElement.hasAttribute('visited')).toBeTruthy();
+            expect(boardElement.getAttribute('value')).toBe('0');
+            expect(boardElement.hasAttribute('visited')).toBeTruthy();
             expect(minesweeperTileElement.visited).toBeTruthy();
             expect(minesweeperTileElement.isDisabled()).toBeTruthy();
         });

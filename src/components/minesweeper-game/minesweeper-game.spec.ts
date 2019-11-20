@@ -14,7 +14,7 @@ describe('Minesweeper game', () => {
     beforeEach(() => {
         minesweeperGameElement = <MinesweeperGameElement>document.createElement('minesweeper-game');
         document.body.appendChild(minesweeperGameElement);
-        
+
         // need to uninstall first since we're mocking setInterval in some tests (even if they're outside this file)
         // https://github.com/jasmine/jasmine/issues/826#issuecomment-100028373
         jasmine.clock().uninstall();
@@ -190,7 +190,7 @@ describe('Minesweeper game', () => {
     it('should not update high score if current time is less than high score', () => {
         const wonEvent = new CustomEvent('won', { bubbles: true });
         const tileSelectedEvent = new CustomEvent('tile-select', { bubbles: true });
-        
+
         minesweeperBoardElement.dispatchEvent(tileSelectedEvent);
         minesweeperBoardElement.dispatchEvent(wonEvent);
 
@@ -199,7 +199,7 @@ describe('Minesweeper game', () => {
 
     it('should not start timer if timer is already started', () => {
         const tileSelectedEvent = new CustomEvent('tile-select', { bubbles: true });
-        
+
         minesweeperTimerElement.start();
         (<jasmine.Spy>minesweeperTimerElement.start).calls.reset();
         minesweeperBoardElement.dispatchEvent(tileSelectedEvent);
@@ -210,7 +210,7 @@ describe('Minesweeper game', () => {
     it('should not set game state to in progress if the current state isn\'t started', () => {
         const wonEvent = new CustomEvent('won', { bubbles: true });
         const tileSelectedEvent = new CustomEvent('tile-select', { bubbles: true });
-        
+
         minesweeperBoardElement.dispatchEvent(tileSelectedEvent);
         minesweeperBoardElement.dispatchEvent(wonEvent);
         (<jasmine.Spy>minesweeperConfigurationElement.displayHappy).calls.reset();

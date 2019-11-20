@@ -202,7 +202,7 @@ describe('Minesweeper configuration', () => {
             configurationOptionsFrame.dispatchEvent(keyboardEvent);
 
             expect(newGameCallback).not.toHaveBeenCalled();
-        })
+        });
     });
 
     afterEach(() => {

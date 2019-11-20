@@ -38,8 +38,25 @@ describe('Configuration store', () => {
             }]));
 
         const configurations = ConfigurationStore.getConfigurations();
+
         expect(configurations.length).toBe(1);
         expect(localStorage.getItem).toHaveBeenCalledTimes(1);
+    });
+
+    it('should add configuration', () => {
+        const configuration = {
+            id: 1,
+            name: 'Beginner',
+            width: 9,
+            height: 9,
+            mines: 10,
+            highScore: Infinity
+        };
+
+        ConfigurationStore.addOrUpdateConfiguration(configuration);
+
+        expect(JSON.parse(localStorageFake.get(LOCAL_STORAGE_KEY)).length).toBe(1);
+        expect(JSON.parse(localStorageFake.get(LOCAL_STORAGE_KEY))[0].highScore).toEqual(null);
     });
 
     it('should update configuration', () => {
@@ -51,10 +68,7 @@ describe('Configuration store', () => {
             mines: 10,
             highScore: Infinity
         };
-
         ConfigurationStore.addOrUpdateConfiguration(configuration);
-        expect(JSON.parse(localStorageFake.get(LOCAL_STORAGE_KEY)).length).toBe(1);
-        expect(JSON.parse(localStorageFake.get(LOCAL_STORAGE_KEY))[0].highScore).toEqual(null);
 
         configuration = {
             id: 1,
@@ -64,8 +78,8 @@ describe('Configuration store', () => {
             mines: 10,
             highScore: 10
         };
-
         ConfigurationStore.addOrUpdateConfiguration(configuration);
+
         expect(JSON.parse(localStorageFake.get(LOCAL_STORAGE_KEY)).length).toBe(1);
         expect(JSON.parse(localStorageFake.get(LOCAL_STORAGE_KEY))[0].highScore).toEqual(configuration.highScore);
     });

@@ -42,7 +42,7 @@ describe('Minesweeper timer element', () => {
 
         expect(setInterval).not.toHaveBeenCalled();
     });
-    
+
     it('should display counts when counting', () => {
         minesweeperTimerElement.start();
 
@@ -55,7 +55,7 @@ describe('Minesweeper timer element', () => {
     it('should stop timer', () => {
         minesweeperTimerElement.start();
         jasmine.clock().tick(FIVE_SECONDS_MS);
-        
+
         minesweeperTimerElement.stop();
         jasmine.clock().tick(FIVE_SECONDS_MS);
 
@@ -65,7 +65,7 @@ describe('Minesweeper timer element', () => {
     it('should reset timer', () => {
         minesweeperTimerElement.start();
         jasmine.clock().tick(FIVE_SECONDS_MS);
-        
+
         minesweeperTimerElement.reset();
         jasmine.clock().tick(FIVE_SECONDS_MS);
 
@@ -74,7 +74,7 @@ describe('Minesweeper timer element', () => {
 
     afterEach(() => {
         document.body.removeChild(minesweeperTimerElement);
-        
+
         jasmine.clock().uninstall();
     });
 });

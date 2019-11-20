@@ -22,7 +22,7 @@ describe('Minesweeper remaining element', () => {
         const count = 10;
 
         minesweeperRemainingMinesElement.count = count;
-        
+
         expect(minesweeperRemainingMinesElement.getAttribute('count')).toBe(String(count));
     });
 
@@ -30,7 +30,7 @@ describe('Minesweeper remaining element', () => {
         const count = 10;
 
         minesweeperRemainingMinesElement.setAttribute('count', String(count));
-        
+
         expect(minesweeperRemainingMinesElement.count).toBe(count);
     });
 
@@ -38,7 +38,7 @@ describe('Minesweeper remaining element', () => {
         const newCount = 10;
 
         minesweeperRemainingMinesElement.reset(newCount);
-        
+
         expect(minesweeperRemainingMinesElement.count).toBe(newCount);
     });
 
@@ -56,7 +56,7 @@ describe('Minesweeper remaining element', () => {
         const initialCount = 10;
         const finalCount = initialCount - 1;
         minesweeperRemainingMinesElement.reset(initialCount);
-        
+
         minesweeperRemainingMinesElement.decrease();
 
         expect(minesweeperRemainingMinesElement.count).toBe(finalCount);
@@ -65,7 +65,7 @@ describe('Minesweeper remaining element', () => {
     describe('should reflect count to display', () => {
         it('after reset', () => {
             const count = 10;
-    
+
             minesweeperRemainingMinesElement.reset(count);
 
             expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('010');
@@ -74,16 +74,16 @@ describe('Minesweeper remaining element', () => {
         it('after decrease', () => {
             const initialCount = 10;
             minesweeperRemainingMinesElement.reset(initialCount);
-    
+
             minesweeperRemainingMinesElement.decrease();
 
             expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('009');
         });
-        
+
         it('after increase', () => {
             const initialCount = 10;
             minesweeperRemainingMinesElement.reset(initialCount);
-    
+
             minesweeperRemainingMinesElement.increase();
 
             expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe('011');
@@ -91,7 +91,7 @@ describe('Minesweeper remaining element', () => {
 
         it('with negative numbers', () => {
             const count = -1;
-    
+
             minesweeperRemainingMinesElement.reset(count);
 
             expect(minesweeperRemainingMinesElement.shadowRoot.getElementById('display').textContent).toBe(' -1');
@@ -100,7 +100,7 @@ describe('Minesweeper remaining element', () => {
 
     afterEach(() => {
         document.body.removeChild(minesweeperRemainingMinesElement);
-        
+
         jasmine.clock().uninstall();
     });
 });

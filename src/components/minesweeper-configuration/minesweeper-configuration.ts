@@ -121,7 +121,7 @@ export class MinesweeperConfigurationElement extends HTMLElement {
                 this.toggleVisible();
                 return;
             }
-            
+
             // change configuration if the user selects an option in the configuration dropdown with the ' ' or 'Enter' key
             const element = (<HTMLElement>e.target).closest('li');
             if (element) {
@@ -143,36 +143,59 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         this.displayHappy();
     }
 
-    connectedCallback() {
+    /**
+     * Dispatch a new game event for the current configuration when the element loads
+     */
+    connectedCallback(): void {
         this.dispatchEvent(new CustomEvent('new-game', {
             detail: this.currentConfiguration,
             bubbles: true
         }));
     }
 
-    displayHappy() {
+    /**
+     * Displays the Happy face
+     */
+    displayHappy(): void {
         this.displayElement.textContent = '😊';
     }
 
-    displayLost() {
+    /**
+     * Displays the Lost face
+     */
+    displayLost(): void {
         this.displayElement.textContent = '☹️';
     }
 
-    displaySurprise() {
+    /**
+     * Displays the Surprise face
+     */
+    displaySurprise(): void {
         this.displayElement.textContent = '😮';
     }
 
-    displayWon() {
+    /**
+     * Displays the Won face
+     */
+    displayWon(): void {
         this.displayElement.textContent = '😎';
     }
 
-    updateHighScore(score: number) {
+    /**
+     * Updates the current configuration's high score
+     *
+     * @param score The updated score
+     */
+    updateHighScore(score: number): void {
         this.currentConfiguration.highScore = score;
         ConfigurationStore.addOrUpdateConfiguration(this.currentConfiguration);
         this.buildSetupList();
     }
 
-    private buildSetupList() {
+    /**
+     * Builds the list of configuration options
+     */
+    private buildSetupList(): void {
         while (this.setupDropdownElement.firstChild) {
             this.setupDropdownElement.removeChild(this.setupDropdownElement.firstChild);
         }
@@ -192,11 +215,17 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         }
     }
 
-    private dispatchNewGame(configurationId?: number) {
+    /**
+     * Dispatches a new game event and hides the menu
+     * Updates the current configuration if it is provided
+     *
+     * @param configurationId The configuration id of the configuration to send
+     */
+    private dispatchNewGame(configurationId?: number): void {
         if (configurationId) {
             this.currentConfiguration = ConfigurationStore.getConfigurations().find(c => c.id === configurationId);
         }
-        
+
         this.setupDropdownElement.classList.remove('visible');
         this.dispatchEvent(new CustomEvent('new-game', {
             detail: this.currentConfiguration,
@@ -204,7 +233,10 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         }));
     }
 
-    private toggleVisible() {
+    /**
+     * Toggles the configuration options dropdown visibility
+     */
+    private toggleVisible(): void {
         if (this.setupDropdownElement.classList.contains('visible')) {
             this.setupDropdownElement.classList.remove('visible');
         } else {

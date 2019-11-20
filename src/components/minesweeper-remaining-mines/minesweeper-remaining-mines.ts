@@ -34,7 +34,7 @@ export class MinesweeperRemainingMinesElement extends HTMLElement {
         this.setAttribute('count', String(count));
     }
 
-    static get observedAttributes() {
+    static get observedAttributes(): Array<string> {
         return ['count'];
     }
 
@@ -46,6 +46,13 @@ export class MinesweeperRemainingMinesElement extends HTMLElement {
         this.displayElement = this.shadowRoot.getElementById('display');
     }
 
+    /**
+     * Callback when an observed attribute is changed
+     *
+     * @param attrName The attribute that is changed
+     * @param oldVal The old value
+     * @param newVal The new value
+     */
     attributeChangedCallback(attrName: string, oldVal: string, newVal: string) {
         switch (attrName) {
             case 'count':
@@ -54,18 +61,34 @@ export class MinesweeperRemainingMinesElement extends HTMLElement {
         }
     }
 
+    /**
+     * Resets the mine count
+     *
+     * @param numMines The number of mines to reset to
+     */
     reset(numMines: number): void {
         this.count = numMines;
     }
 
+    /**
+     * Increases the mine count
+     */
     increase(): void {
         this.count++;
     }
 
+    /**
+     * Decreases the mine count
+     */
     decrease(): void {
         this.count--;
     }
 
+    /**
+     * Formats the current mine count
+     *
+     * @returns The formatted mine count
+     */
     private getCount(): string {
         return this.count >= 0 ? String(this.count).padStart(DISPLAY_DIGITS, '0') : String(this.count).padStart(DISPLAY_DIGITS, ' ');
     }

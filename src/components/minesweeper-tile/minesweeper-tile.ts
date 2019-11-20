@@ -2,68 +2,72 @@ const template = document.createElement('template');
 template.innerHTML = `
 <style>
     :host {
-        box-sizing: border-box;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 1.5rem;
-        width: 1.5rem;
         font-family: arial;
         font-weight: 900;
-        border: .25rem outset lightgrey;
-        background-color: lightgrey;
         cursor: pointer;
         user-select: none;
         -moz-user-select: none;
+        outline: none;
+        -moz-outline: none;
     }
 
     :host[hidden] {
         display: none;
     }
 
-    :host([pressed], :focus) {
+    :host(:focus) > #display,
+    #display[pressed] {
         border: none;
-        outline: none;
-        -moz-outline: none;
+    }
+    
+    #display {
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 1.5rem;
+        width: 1.5rem;
+        background-color: lightgrey;
+        border: .25rem outset lightgrey;
     }
 
-    :host([exploded]) {
+    #display[exploded] {
         background-color: red;
     }
 
-    :host([visited]) {
+    #display[visited] {
         border: none;
     }
 
-    :host([value='1']) {
+    #display[value='1'] {
         color: var(--minesweeper-tile-one-color, blue);
     }
 
-    :host([value='2']) {
+    #display[value='2'] {
         color: var(--minesweeper-tile-two-color, green);
     }
 
-    :host([value='3']) {
+    #display[value='3'] {
         color: var(--minesweeper-tile-three-color, red);
     }
 
-    :host([value='4']) {
+    #display[value='4'] {
         color: var(--minesweeper-tile-four-color, purple);
     }
 
-    :host([value='5']) {
+    #display[value='5'] {
         color: var(--minesweeper-tile-five-color, maroon);
     }
 
-    :host([value='6']) {
+    #display[value='6'] {
         color: var(--minesweeper-tile-six-color, turquoise);
     }
 
-    :host([value='7']) {
+    #display[value='7'] {
         color: var(--minesweeper-tile-seven-color, black);
     }
 
-    :host([value='8']) {
+    #display[value='8'] {
         color: var(--minesweeper-tile-eight-color, grey);
     }
 </style>
@@ -77,7 +81,7 @@ export class MinesweeperTileElement extends HTMLElement {
     // tile is should be disabled when it is revealed or when the game is over
     private disabled: boolean;
 
-    // whether or not this is a mine
+    // whether or not the tile is a mine
     private mine: boolean;
 
     get x(): number {
@@ -95,16 +99,16 @@ export class MinesweeperTileElement extends HTMLElement {
     }
 
     get value(): string {
-        return this.getAttribute('value');
+        return this.displayElement.getAttribute('value');
     }
 
     set value(value: string) {
-        this.setAttribute('value', value);
+        this.displayElement.setAttribute('value', value);
         this.displayElement.textContent = this.value !== '0' ? this.value : '';
     }
 
     get visited(): boolean {
-        return this.hasAttribute('visited');
+        return this.displayElement.hasAttribute('visited');
     }
 
     constructor() {
@@ -115,12 +119,12 @@ export class MinesweeperTileElement extends HTMLElement {
 
         this.displayElement = this.shadowRoot.getElementById('display');
 
-        this.addEventListener('contextmenu', e => {
+        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
             e.preventDefault();
             this.toggleFlag();
         });
 
-        this.addEventListener('keydown', e => {
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
             switch (e.key) {
                 case 'f':
                     this.toggleFlag();
@@ -132,42 +136,51 @@ export class MinesweeperTileElement extends HTMLElement {
             }
         });
 
-        this.addEventListener('mousedown', e => {
+        this.shadowRoot.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault(); // prevent focus on all mouse events
             if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
-                this.setAttribute('pressed', '');
+                this.displayElement.setAttribute('pressed', '');
             }
         });
 
-        this.addEventListener('mouseout', e => {
-            this.removeAttribute('pressed');
+        this.shadowRoot.addEventListener('mouseout', (e: MouseEvent) => {
+            this.displayElement.removeAttribute('pressed');
         });
 
-        this.addEventListener('mouseover', e => {
+        this.shadowRoot.addEventListener('mouseover', (e: MouseEvent) => {
             if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
-                this.setAttribute('pressed', '');
+                this.displayElement.setAttribute('pressed', '');
             }
         });
 
-        this.addEventListener('mouseup', e => {
+        this.shadowRoot.addEventListener('mouseup', (e: MouseEvent) => {
             if (e.which === 1) {
                 this.selectTile();
             }
         });
     }
 
+    /**
+     * The connected callback
+     */
     connectedCallback(): void {
-        this.x = +this.getAttribute('x');
-        this.y = +this.getAttribute('y');
-        this.hasAttribute('tabindex') || this.setAttribute('tabindex', '0');
+        if (!this.hasAttribute('tabindex')) {
+            this.setAttribute('tabindex', '0');
+        }
     }
 
+    /**
+     * Disables the tile
+     */
     disable(): void {
         this.disabled = true;
         this.removeAttribute('tabindex');
         this.blur();
     }
 
+    /**
+     * Flags the tile if the tile is in a valid state to do so
+     */
     flag(): void {
         if (this.disabled || this.isFlagged()) { return; }
 
@@ -177,44 +190,78 @@ export class MinesweeperTileElement extends HTMLElement {
         }
     }
 
+    /**
+     * Whether or not the tile is disabled
+     *
+     * @returns true if the tile is disabled, false otherwise
+     */
     isDisabled(): boolean {
         return this.disabled;
     }
 
+    /**
+     * Whether or not the tile is flagged
+     *
+     * @returns true if the tile is flagged, false otherwise
+     */
     isFlagged(): boolean {
         return this.value === '🚩';
     }
 
+    /**
+     * Whether or not the tile is a mine
+     *
+     * @returns true if the tile is a mine, false otherwise
+     */
     isMine(): boolean {
         return this.mine;
     }
 
+    /**
+     * Reveals that the tile is a mine
+     *
+     * @param clicked Whether or not the tile was clicked
+     */
     revealMine(clicked: boolean = false): void {
         if (clicked) {
-            this.setAttribute('exploded', '');
+            this.displayElement.setAttribute('exploded', '');
         }
 
         this.value = '💣';
         this.disable();
-        this.setAttribute('visited', '');
+        this.displayElement.setAttribute('visited', '');
     }
 
+    /**
+     * Reveals that the tile was not a mine
+     */
     revealNotMine(): void {
         this.value = '❌';
         this.disable();
-        this.setAttribute('visited', '');
+        this.displayElement.setAttribute('visited', '');
     }
 
+    /**
+     * Reveals the surrounding mine count
+     *
+     * @param numSurroundingMines The number of surrounding mines
+     */
     revealTileCount(numSurroundingMines: number): void {
         this.value = String(numSurroundingMines);
         this.disable();
-        this.setAttribute('visited', '');
+        this.displayElement.setAttribute('visited', '');
     }
 
+    /**
+     * Sets the tile as a mine
+     */
     setMine(): void {
         this.mine = true;
     }
 
+    /**
+     * Unflags the tile if the tile is in a valid state to do so
+     */
     unflag(): void {
         if (this.disabled || !this.isFlagged()) { return; }
 
@@ -224,7 +271,10 @@ export class MinesweeperTileElement extends HTMLElement {
         }
     }
 
-    private toggleFlag() {
+    /**
+     * Toggles flagging the tile if the tile is in a valid state to do so
+     */
+    private toggleFlag(): void {
         if (this.disabled) { return; }
 
         if (this.isFlagged()) {
@@ -234,7 +284,10 @@ export class MinesweeperTileElement extends HTMLElement {
         }
     }
 
-    private selectTile() {
+    /**
+     * Dispatches a tile-select event if the tile is in a valid state to do so
+     */
+    private selectTile(): void {
         if (!this.disabled && !this.isFlagged()) {
             this.dispatchEvent(new CustomEvent('tile-select', { bubbles: true, composed: true }));
         }
