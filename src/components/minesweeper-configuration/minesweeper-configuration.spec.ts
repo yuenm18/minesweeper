@@ -15,22 +15,19 @@ describe('Minesweeper configuration', () => {
     });
 
     it('should not focus on mouse down', () => {
-        const mouseDownEvent = new MouseEvent('mousedown');
-        Object.defineProperty(mouseDownEvent, 'buttons', {
-            value: 1
-        });
+        const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, buttons: 1 });
 
-        minesweeperConfigurationElement.dispatchEvent(mouseDownEvent);
+        minesweeperConfigurationElement.shadowRoot.dispatchEvent(mouseDownEvent);
 
         expect(document.activeElement).not.toBe(minesweeperConfigurationElement);
     });
-    
+
     it('should update high score', () => {
         const newHighScore = 100;
         spyOn(ConfigurationStore, 'addOrUpdateConfiguration').and.callThrough();
 
         minesweeperConfigurationElement.updateHighScore(newHighScore);
-        
+
         expect(ConfigurationStore.addOrUpdateConfiguration).toHaveBeenCalledTimes(1);
         expect(ConfigurationStore.addOrUpdateConfiguration).toHaveBeenCalledWith(jasmine.objectContaining({ highScore: newHighScore }));
     });
@@ -91,21 +88,21 @@ describe('Minesweeper configuration', () => {
         });
 
         it('when contextmenu is shown', () => {
-            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true });
+            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
 
-            minesweeperConfigurationElement.dispatchEvent(contextmenuEvent);
+            minesweeperConfigurationElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
+            expect(contextmenuEvent.defaultPrevented).toBe(true);
             expect(setupDropdown).toHaveClass('visible');
         });
 
-        it('when an alphanumeric key is clicked', () => {
+        it('when an alphanumeric key is pressed', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true });
 
-            minesweeperConfigurationElement.dispatchEvent(keydownEvent);
+            minesweeperConfigurationElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(setupDropdown).toHaveClass('visible');
         });
-
     });
 
     describe('should hide list of games', () => {
@@ -114,30 +111,30 @@ describe('Minesweeper configuration', () => {
         beforeEach(() => {
             setupDropdown = minesweeperConfigurationElement.shadowRoot.getElementById('setup-dropdown');
 
-            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true });
-            minesweeperConfigurationElement.dispatchEvent(contextmenuEvent);
+            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+            minesweeperConfigurationElement.shadowRoot.dispatchEvent(contextmenuEvent);
         });
 
         it('when contextmenu is shown', () => {
-            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true });
+            const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+            minesweeperConfigurationElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
-            minesweeperConfigurationElement.dispatchEvent(contextmenuEvent);
-
+            expect(contextmenuEvent.defaultPrevented).toBe(true);
             expect(setupDropdown).not.toHaveClass('visible');
         });
 
-        it('when an alphanumeric key is clicked', () => {
+        it('when an alphanumeric key is pressed', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true });
 
-            minesweeperConfigurationElement.dispatchEvent(keydownEvent);
+            minesweeperConfigurationElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(setupDropdown).not.toHaveClass('visible');
         });
 
-        it('when the Escape key is clicked', () => {
+        it('when the Escape key is pressed', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
 
-            minesweeperConfigurationElement.dispatchEvent(keydownEvent);
+            minesweeperConfigurationElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(setupDropdown).not.toHaveClass('visible');
         });
@@ -149,12 +146,12 @@ describe('Minesweeper configuration', () => {
 
         beforeEach(() => {
             advancedGameOption = minesweeperConfigurationElement.shadowRoot.getElementById('3');
-            
+
             newGameCallback = jasmine.createSpy('newGameCallback');
             minesweeperConfigurationElement.addEventListener('new-game', newGameCallback);
         });
 
-        it('should start', () => {
+        it('when clicked', () => {
             const clickEvent = new MouseEvent('click', { bubbles: true });
 
             advancedGameOption.dispatchEvent(clickEvent);
@@ -178,6 +175,34 @@ describe('Minesweeper configuration', () => {
 
             expect(newGameCallback).toHaveBeenCalledWith(jasmine.objectContaining({ detail: jasmine.objectContaining({ id: 3 }) }));
         });
+    });
+
+    describe('should not start new game new advanced game', () => {
+        let newGameCallback: jasmine.Func;
+        let configurationOptionsFrame: HTMLElement;
+
+        beforeEach(() => {
+            configurationOptionsFrame = minesweeperConfigurationElement.shadowRoot.querySelector('ul');
+
+            newGameCallback = jasmine.createSpy('newGameCallback');
+            minesweeperConfigurationElement.addEventListener('new-game', newGameCallback);
+        });
+
+        it('when enter key is pressed not on a configuration option', () => {
+            const clickEvent = new MouseEvent('click', { bubbles: true });
+
+            configurationOptionsFrame.dispatchEvent(clickEvent);
+
+            expect(newGameCallback).not.toHaveBeenCalled();
+        });
+
+        it('when mouse clicked not on a configuration option', () => {
+            const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+
+            configurationOptionsFrame.dispatchEvent(keyboardEvent);
+
+            expect(newGameCallback).not.toHaveBeenCalled();
+        })
     });
 
     afterEach(() => {

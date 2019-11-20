@@ -62,7 +62,7 @@ template.innerHTML = `
     }
 
     span {
-        font-size: 50%;
+        font-size: 0.5em;
     }
 
     li {
@@ -88,29 +88,54 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         this.setupDropdownElement = this.shadowRoot.getElementById('setup-dropdown');
         this.buildSetupList();
 
-        this.displayElement.addEventListener('click', e => {
-            this.dispatchNewGame();
+        this.shadowRoot.addEventListener('click', (e: MouseEvent) => {
+            // new game if the user clicks the button
+            if ((<HTMLElement>e.target).id === 'display') {
+                this.dispatchNewGame();
+                return;
+            }
+
+            // change configuration if the user clicks an option in the configuration dropdown
+            const element = (<HTMLElement>e.target).closest('li');
+            if (element) {
+                this.dispatchNewGame(+element.id);
+            }
         });
 
-        this.addEventListener('keydown', e => {
-            // hide configuraiton menu is esc is pressed
+
+        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
+            // right click toggles configuration menu
+            e.preventDefault();
+            this.toggleVisible();
+        });
+
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
+            // hide configuration menu is esc is pressed
             if (e.key === 'Escape') {
                 this.setupDropdownElement.classList.remove('visible');
+                return;
             }
 
             // toggle visible if any normal key is pressed
             if (/^[a-z0-9]$/.test(e.key)) {
                 this.toggleVisible();
+                return;
+            }
+            
+            // change configuration if the user selects an option in the configuration dropdown with the ' ' or 'Enter' key
+            const element = (<HTMLElement>e.target).closest('li');
+            if (element) {
+                switch (e.key) {
+                    case ' ':
+                    case 'Enter':
+                        this.dispatchNewGame(+element.id);
+                        break;
+                }
             }
         });
 
-        this.addEventListener('contextmenu', e => {
-            e.preventDefault();
-            this.toggleVisible();
-        });
-
         // don't keep focus on mouse events
-        this.addEventListener('mousedown', e => {
+        this.shadowRoot.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault();
         });
 
@@ -155,35 +180,23 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         for (const configuration of ConfigurationStore.getConfigurations()) {
             const configurationElement = document.createElement('li');
             const configurationDetailsElement = document.createElement('span');
+
             configurationElement.id = String(configuration.id);
             configurationElement.textContent = configuration.name;
             configurationElement.tabIndex = 0;
+
             configurationDetailsElement.textContent = `${configuration.width} x ${configuration.height} board with ${configuration.mines} mines${configuration.highScore === Infinity ? '' : ` (High score: ${configuration.highScore})`}`;
+
             configurationElement.appendChild(configurationDetailsElement);
-
-            configurationElement.addEventListener('click', e => {
-                configurationListener();
-            });
-
-            configurationElement.addEventListener('keydown', e => {
-                switch (e.key) {
-                    case ' ':
-                    case 'Enter':
-                        configurationListener();
-                        break;
-                }
-            });
-
-            const configurationListener = () => {
-                this.currentConfiguration = configuration;
-                this.dispatchNewGame();
-            };
-
             this.setupDropdownElement.appendChild(configurationElement);
         }
     }
 
-    private dispatchNewGame() {
+    private dispatchNewGame(configurationId?: number) {
+        if (configurationId) {
+            this.currentConfiguration = ConfigurationStore.getConfigurations().find(c => c.id === configurationId);
+        }
+        
         this.setupDropdownElement.classList.remove('visible');
         this.dispatchEvent(new CustomEvent('new-game', {
             detail: this.currentConfiguration,

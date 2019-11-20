@@ -1,4 +1,6 @@
+.devcontainer
 .lighthouseci
+.vscode
 coverage
 dist
 node_modules

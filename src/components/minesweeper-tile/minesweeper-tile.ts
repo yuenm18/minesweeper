@@ -164,8 +164,8 @@ export class MinesweeperTileElement extends HTMLElement {
 
     disable(): void {
         this.disabled = true;
+        this.removeAttribute('tabindex');
         this.blur();
-        this.setAttribute('tabindex', '-1');
     }
 
     flag(): void {

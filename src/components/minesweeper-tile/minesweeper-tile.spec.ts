@@ -41,7 +41,7 @@ describe('Minesweeper tile element', () => {
 
             minesweeperTileElement.disable();
 
-            expect(minesweeperTileElement.getAttribute('tabindex')).toBe('-1');
+            expect(minesweeperTileElement.hasAttribute('tabindex')).toBe(false);
             expect(document.activeElement).not.toBe(minesweeperTileElement);
         });
 
