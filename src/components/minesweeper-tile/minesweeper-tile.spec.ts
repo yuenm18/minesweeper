@@ -16,7 +16,7 @@ describe('Minesweeper tile element', () => {
     });
 
     it('should reflect properties to attributes', () => {
-        const x = 1, y = 2, value = '3';
+        const x = 1, y = 2;
         minesweeperTileElement.x = x;
         minesweeperTileElement.y = y;
 
@@ -25,7 +25,7 @@ describe('Minesweeper tile element', () => {
     });
 
     it('should reflect attributes to properties', () => {
-        const x = 1, y = 2, value = '3';
+        const x = 1, y = 2;
         minesweeperTileElement.setAttribute('x', String(x));
         minesweeperTileElement.setAttribute('y', String(y));
 
