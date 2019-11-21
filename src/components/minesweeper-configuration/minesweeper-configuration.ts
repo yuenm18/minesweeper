@@ -8,6 +8,7 @@ template.innerHTML = `
         font-size: 1.5rem;
         user-select: none;
         -moz-user-select: none;
+        outline: none;
     }
 
     :host[hidden] {
@@ -16,13 +17,8 @@ template.innerHTML = `
 
     *:focus {
         outline: none;
-        -moz-outline: none;
     }
-
-    #display:active, #display:focus {
-        border-style: inset;
-    }
-
+    
     #display {
         display: flex;
         align-items: center;
@@ -32,6 +28,14 @@ template.innerHTML = `
         width: 2.5rem;
         border: .25rem lightgrey outset;
         cursor: pointer;
+    }
+
+    #display:active, #display:focus, #display.firefox-active {
+        border-style: inset;
+    }
+
+    #display::-moz-focus-inner {
+        border: 0;
     }
 
     .setup-dropdown {
@@ -139,6 +143,8 @@ export class MinesweeperConfigurationElement extends HTMLElement {
             e.preventDefault();
         });
 
+        this.handleFirefoxActiveFlagIssue();
+
         this.currentConfiguration = ConfigurationStore.getCurrentConfiguration();
         this.displayHappy();
     }
@@ -231,6 +237,24 @@ export class MinesweeperConfigurationElement extends HTMLElement {
             detail: this.currentConfiguration,
             bubbles: true
         }));
+    }
+
+    /**
+     * firefox doesn't set the display element to active if prevent default is called on mousedown
+     * https://github.com/w3c/csswg-drafts/issues/2262#issuecomment-362868260
+     */
+    private handleFirefoxActiveFlagIssue(): void {
+        this.shadowRoot.addEventListener('mousedown', (e: MouseEvent) => {
+            this.displayElement.classList.add('firefox-active');
+        });
+        
+        this.shadowRoot.addEventListener('mouseup', (e: MouseEvent) => {
+            this.displayElement.classList.remove('firefox-active');
+        });
+        
+        this.shadowRoot.addEventListener('mouseout', (e: MouseEvent) => {
+            this.displayElement.classList.remove('firefox-active');
+        });
     }
 
     /**
