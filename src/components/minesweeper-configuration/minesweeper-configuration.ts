@@ -247,11 +247,11 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         this.shadowRoot.addEventListener('mousedown', (e: MouseEvent) => {
             this.displayElement.classList.add('firefox-active');
         });
-        
+
         this.shadowRoot.addEventListener('mouseup', (e: MouseEvent) => {
             this.displayElement.classList.remove('firefox-active');
         });
-        
+
         this.shadowRoot.addEventListener('mouseout', (e: MouseEvent) => {
             this.displayElement.classList.remove('firefox-active');
         });

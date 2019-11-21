@@ -217,7 +217,7 @@ describe('Minesweeper configuration', () => {
 
             minesweeperConfigurationElement.shadowRoot.dispatchEvent(mousedownEvent);
 
-            expect(displayElement).toHaveClass('firefox-active')
+            expect(displayElement).toHaveClass('firefox-active');
         });
 
         describe('by removing "firefox-active"', () => {
@@ -227,18 +227,18 @@ describe('Minesweeper configuration', () => {
 
             it('on mouse up', () => {
                 const mouseupEvent = new MouseEvent('mouseup');
-    
+
                 minesweeperConfigurationElement.shadowRoot.dispatchEvent(mouseupEvent);
-    
-                expect(displayElement).not.toHaveClass('firefox-active')
+
+                expect(displayElement).not.toHaveClass('firefox-active');
             });
 
             it('on mouse out', () => {
                 const mouseoutEvent = new MouseEvent('mouseout');
-    
+
                 minesweeperConfigurationElement.shadowRoot.dispatchEvent(mouseoutEvent);
-    
-                expect(displayElement).not.toHaveClass('firefox-active')
+
+                expect(displayElement).not.toHaveClass('firefox-active');
             });
         });
     });
