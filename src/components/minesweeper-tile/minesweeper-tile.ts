@@ -274,7 +274,7 @@ export class MinesweeperTileElement extends HTMLElement {
             }
         });
     }
-    
+
     /**
      * Add event listeners for selecting the tile
      */
