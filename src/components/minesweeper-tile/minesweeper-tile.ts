@@ -119,45 +119,9 @@ export class MinesweeperTileElement extends HTMLElement {
 
         this.displayElement = this.shadowRoot.getElementById('display');
 
-        this.addEventListener('contextmenu', (e: MouseEvent) => {
-            e.preventDefault();
-            this.toggleFlag();
-        });
-
-        this.addEventListener('keydown', (e: KeyboardEvent) => {
-            switch (e.key) {
-                case 'f':
-                    this.toggleFlag();
-                    break;
-                case ' ':
-                case 'Enter':
-                    this.selectTile();
-                    break;
-            }
-        });
-
-        this.addEventListener('mousedown', (e: MouseEvent) => {
-            e.preventDefault(); // prevent focus on all mouse events
-            if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
-                this.displayElement.setAttribute('pressed', '');
-            }
-        });
-
-        this.addEventListener('mouseout', (e: MouseEvent) => {
-            this.displayElement.removeAttribute('pressed');
-        });
-
-        this.addEventListener('mouseover', (e: MouseEvent) => {
-            if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
-                this.displayElement.setAttribute('pressed', '');
-            }
-        });
-
-        this.addEventListener('mouseup', (e: MouseEvent) => {
-            if (e.which === 1) {
-                this.selectTile();
-            }
-        });
+        this.handleFlaggingTile();
+        this.handleSelectingTile();
+        this.handlingPressingTile();
     }
 
     /**
@@ -269,6 +233,66 @@ export class MinesweeperTileElement extends HTMLElement {
         if (this.dispatchEvent(unflagEvent)) {
             this.value = '';
         }
+    }
+
+    /**
+     * Add event listeners for flagging the tile
+     */
+    private handleFlaggingTile(): void {
+        this.addEventListener('contextmenu', (e: MouseEvent) => {
+            e.preventDefault();
+            this.toggleFlag();
+        });
+
+        this.addEventListener('keydown', (e: KeyboardEvent) => {
+            switch (e.key) {
+                case 'f':
+                    this.toggleFlag();
+                    break;
+            }
+        });
+    }
+
+    /**
+     * Add event listeners for press indicators on the tile
+     */
+    private handlingPressingTile(): void {
+        this.addEventListener('mousedown', (e: MouseEvent) => {
+            e.preventDefault(); // prevent focus on all mouse events
+            if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
+                this.displayElement.setAttribute('pressed', '');
+            }
+        });
+
+        this.addEventListener('mouseout', (e: MouseEvent) => {
+            this.displayElement.removeAttribute('pressed');
+        });
+
+        this.addEventListener('mouseover', (e: MouseEvent) => {
+            if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
+                this.displayElement.setAttribute('pressed', '');
+            }
+        });
+    }
+    
+    /**
+     * Add event listeners for selecting the tile
+     */
+    private handleSelectingTile(): void {
+        this.addEventListener('keydown', (e: KeyboardEvent) => {
+            switch (e.key) {
+                case ' ':
+                case 'Enter':
+                    this.selectTile();
+                    break;
+            }
+        });
+
+        this.addEventListener('mouseup', (e: MouseEvent) => {
+            if (e.which === 1) {
+                this.selectTile();
+            }
+        });
     }
 
     /**

@@ -92,57 +92,10 @@ export class MinesweeperConfigurationElement extends HTMLElement {
         this.setupDropdownElement = this.shadowRoot.getElementById('setup-dropdown');
         this.buildSetupList();
 
-        this.shadowRoot.addEventListener('click', (e: MouseEvent) => {
-            // new game if the user clicks the button
-            if ((<HTMLElement>e.target).id === 'display') {
-                this.dispatchNewGame();
-                return;
-            }
-
-            // change configuration if the user clicks an option in the configuration dropdown
-            const element = (<HTMLElement>e.target).closest('li');
-            if (element) {
-                this.dispatchNewGame(+element.id);
-            }
-        });
-
-
-        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
-            // right click toggles configuration menu
-            e.preventDefault();
-            this.toggleVisible();
-        });
-
-        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
-            // hide configuration menu is esc is pressed
-            if (e.key === 'Escape') {
-                this.setupDropdownElement.classList.remove('visible');
-                return;
-            }
-
-            // toggle visible if any normal key is pressed
-            if (/^[a-z0-9]$/.test(e.key)) {
-                this.toggleVisible();
-                return;
-            }
-
-            // change configuration if the user selects an option in the configuration dropdown with the ' ' or 'Enter' key
-            const element = (<HTMLElement>e.target).closest('li');
-            if (element) {
-                switch (e.key) {
-                    case ' ':
-                    case 'Enter':
-                        this.dispatchNewGame(+element.id);
-                        break;
-                }
-            }
-        });
-
-        // don't keep focus on mouse events
-        this.shadowRoot.addEventListener('mousedown', (e: MouseEvent) => {
-            e.preventDefault();
-        });
-
+        this.handleNewGameCreation();
+        this.handleTogglingConfigurationMenu();
+        this.handleClosingConfigurationMenu();
+        this.handlePreventingFocusOnMouseEvents();
         this.handleFirefoxActiveFlagIssue();
 
         this.currentConfiguration = ConfigurationStore.getCurrentConfiguration();
@@ -240,6 +193,19 @@ export class MinesweeperConfigurationElement extends HTMLElement {
     }
 
     /**
+     * Add event listeners for closing the configuration menu
+     */
+    private handleClosingConfigurationMenu(): void {
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
+            // hide configuration menu is esc is pressed
+            if (e.key === 'Escape') {
+                this.setupDropdownElement.classList.remove('visible');
+                return;
+            }
+        });
+    }
+
+    /**
      * firefox doesn't set the display element to active if prevent default is called on mousedown
      * https://github.com/w3c/csswg-drafts/issues/2262#issuecomment-362868260
      */
@@ -254,6 +220,68 @@ export class MinesweeperConfigurationElement extends HTMLElement {
 
         this.shadowRoot.addEventListener('mouseout', (e: MouseEvent) => {
             this.displayElement.classList.remove('firefox-active');
+        });
+    }
+
+    /**
+     * Add event listeners for creating a new game
+     */
+    private handleNewGameCreation(): void {
+        this.shadowRoot.addEventListener('click', (e: MouseEvent) => {
+            // new game if the user clicks the button
+            if ((<HTMLElement>e.target).id === 'display') {
+                this.dispatchNewGame();
+                return;
+            }
+
+            // change configuration if the user clicks an option in the configuration dropdown
+            const element = (<HTMLElement>e.target).closest('li');
+            if (element) {
+                this.dispatchNewGame(+element.id);
+            }
+        });
+
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
+            // change configuration if the user selects an option in the configuration dropdown with the ' ' or 'Enter' key
+            const element = (<HTMLElement>e.target).closest('li');
+            if (element) {
+                switch (e.key) {
+                    case ' ':
+                    case 'Enter':
+                        this.dispatchNewGame(+element.id);
+                        break;
+                }
+            }
+        });
+    }
+
+    /**
+     * Add event listeners for preventing a focus on mouse events
+     */
+    private handlePreventingFocusOnMouseEvents(): void {
+        // don't keep focus on mouse events
+        this.shadowRoot.addEventListener('mousedown', (e: MouseEvent) => {
+            e.preventDefault();
+        });
+    }
+
+    /**
+     * Add event listeners for toggling the configuration menu
+     */
+    private handleTogglingConfigurationMenu(): void {
+        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
+            // right click toggles configuration menu
+            e.preventDefault();
+
+            this.toggleVisible();
+        });
+
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
+            // toggle visible if any normal key is pressed
+            if (/^[a-z0-9]$/.test(e.key)) {
+                this.toggleVisible();
+                return;
+            }
         });
     }
 

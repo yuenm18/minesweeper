@@ -72,10 +72,15 @@ export class MinesweeperGameElement extends HTMLElement {
         this.configurationElement = <MinesweeperConfigurationElement>this.shadowRoot.getElementById('configuration');
         this.timerElement = <MinesweeperTimerElement>this.shadowRoot.getElementById('timer');
 
-        this.boardElement.addEventListener('lost', (e: CustomEvent) => {
-            this.setStateLost();
-        });
+        this.handleUpdatingMineCount();
+        this.handleChangingState();
+        this.handleChangingExpressionWhenPressingTile();
+    }
 
+    /**
+     * Add event listeners for handling the emoji's expression changing when pressing the tiles
+     */
+    private handleChangingExpressionWhenPressingTile(): void {
         // only set the display to surprise when the game is in progress or started (before the first click)
         // because the display reflects the result of the game when the game is over
         this.boardElement.addEventListener('mousedown', (e: MouseEvent) => {
@@ -84,12 +89,19 @@ export class MinesweeperGameElement extends HTMLElement {
             }
         });
 
-        // only set the display to surprise when the game is in progress (before the first click)
-        // because the display reflects the result of the game when the game is over
         this.boardElement.addEventListener('mouseup', (e: MouseEvent) => {
             if (this.gameState === 'started' || this.gameState === 'in progress') {
                 this.configurationElement.displayHappy();
             }
+        });
+    }
+
+    /**
+     * Add event listeners for handling state changes
+     */
+    private handleChangingState(): void {
+        this.boardElement.addEventListener('lost', (e: CustomEvent) => {
+            this.setStateLost();
         });
 
         this.configurationElement.addEventListener('new-game', (e: CustomEvent) => {
@@ -101,20 +113,25 @@ export class MinesweeperGameElement extends HTMLElement {
             setTimeout(() => this.setStateStarted());
         });
 
-        this.boardElement.addEventListener('tile-flag', (e: CustomEvent) => {
-            this.remainingMinesElement.decrease();
-        });
-
         this.boardElement.addEventListener('tile-select', (e: CustomEvent) => {
             this.setStateInProgress();
         });
 
-        this.boardElement.addEventListener('tile-unflag', (e: CustomEvent) => {
-            this.remainingMinesElement.increase();
-        });
-
         this.boardElement.addEventListener('won', (e: CustomEvent) => {
             this.setStateWon();
+        });
+    }
+
+    /**
+     * Add event listeners for updaing the mine counts when flagging and unflagging mines
+     */
+    private handleUpdatingMineCount(): void {
+        this.boardElement.addEventListener('tile-flag', (e: CustomEvent) => {
+            this.remainingMinesElement.decrease();
+        });
+
+        this.boardElement.addEventListener('tile-unflag', (e: CustomEvent) => {
+            this.remainingMinesElement.increase();
         });
     }
 

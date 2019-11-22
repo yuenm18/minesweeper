@@ -3,9 +3,11 @@ import { ConfigurationStore } from '../../utilities/configuration-store';
 
 describe('Minesweeper configuration', () => {
     let minesweeperConfigurationElement: MinesweeperConfigurationElement;
+    let displayElement: HTMLElement;
 
     beforeEach(() => {
         minesweeperConfigurationElement = <MinesweeperConfigurationElement>document.createElement('minesweeper-configuration');
+        displayElement = minesweeperConfigurationElement.shadowRoot.getElementById('display');
         document.body.appendChild(minesweeperConfigurationElement);
     });
 
@@ -17,7 +19,7 @@ describe('Minesweeper configuration', () => {
     it('should not focus on mouse down', () => {
         const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, buttons: 1 });
 
-        minesweeperConfigurationElement.shadowRoot.dispatchEvent(mouseDownEvent);
+        displayElement.dispatchEvent(mouseDownEvent);
 
         expect(document.activeElement).not.toBe(minesweeperConfigurationElement);
     });
@@ -43,12 +45,6 @@ describe('Minesweeper configuration', () => {
     });
 
     describe('should display', () => {
-        let displayElement: HTMLElement;
-
-        beforeEach(() => {
-            displayElement = minesweeperConfigurationElement.shadowRoot.getElementById('display');
-        });
-
         it('happy by default', () => {
             expect(displayElement.textContent).toBe('😊');
         });
@@ -90,7 +86,7 @@ describe('Minesweeper configuration', () => {
         it('when contextmenu is shown', () => {
             const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
 
-            minesweeperConfigurationElement.shadowRoot.dispatchEvent(contextmenuEvent);
+            displayElement.dispatchEvent(contextmenuEvent);
 
             expect(contextmenuEvent.defaultPrevented).toBe(true);
             expect(setupDropdown).toHaveClass('visible');
@@ -99,7 +95,7 @@ describe('Minesweeper configuration', () => {
         it('when an alphanumeric key is pressed', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true });
 
-            minesweeperConfigurationElement.shadowRoot.dispatchEvent(keydownEvent);
+            displayElement.dispatchEvent(keydownEvent);
 
             expect(setupDropdown).toHaveClass('visible');
         });
@@ -112,12 +108,12 @@ describe('Minesweeper configuration', () => {
             setupDropdown = minesweeperConfigurationElement.shadowRoot.getElementById('setup-dropdown');
 
             const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
-            minesweeperConfigurationElement.shadowRoot.dispatchEvent(contextmenuEvent);
+            displayElement.dispatchEvent(contextmenuEvent);
         });
 
         it('when contextmenu is shown', () => {
             const contextmenuEvent = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
-            minesweeperConfigurationElement.shadowRoot.dispatchEvent(contextmenuEvent);
+            displayElement.dispatchEvent(contextmenuEvent);
 
             expect(contextmenuEvent.defaultPrevented).toBe(true);
             expect(setupDropdown).not.toHaveClass('visible');
@@ -126,7 +122,7 @@ describe('Minesweeper configuration', () => {
         it('when an alphanumeric key is pressed', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'a', bubbles: true });
 
-            minesweeperConfigurationElement.shadowRoot.dispatchEvent(keydownEvent);
+            displayElement.dispatchEvent(keydownEvent);
 
             expect(setupDropdown).not.toHaveClass('visible');
         });
@@ -134,7 +130,7 @@ describe('Minesweeper configuration', () => {
         it('when the Escape key is pressed', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
 
-            minesweeperConfigurationElement.shadowRoot.dispatchEvent(keydownEvent);
+            displayElement.dispatchEvent(keydownEvent);
 
             expect(setupDropdown).not.toHaveClass('visible');
         });
@@ -206,16 +202,10 @@ describe('Minesweeper configuration', () => {
     });
 
     describe('should handle firefox active issue', () => {
-        let displayElement: HTMLElement;
-
-        beforeEach(() => {
-            displayElement = minesweeperConfigurationElement.shadowRoot.getElementById('display');
-        });
-
         it('by setting "firefox-active" on mouse down', () => {
-            const mousedownEvent = new MouseEvent('mousedown');
+            const mousedownEvent = new MouseEvent('mousedown', { bubbles: true });
 
-            minesweeperConfigurationElement.shadowRoot.dispatchEvent(mousedownEvent);
+            displayElement.dispatchEvent(mousedownEvent);
 
             expect(displayElement).toHaveClass('firefox-active');
         });
@@ -226,17 +216,17 @@ describe('Minesweeper configuration', () => {
             });
 
             it('on mouse up', () => {
-                const mouseupEvent = new MouseEvent('mouseup');
+                const mouseupEvent = new MouseEvent('mouseup', { bubbles: true });
 
-                minesweeperConfigurationElement.shadowRoot.dispatchEvent(mouseupEvent);
+                displayElement.dispatchEvent(mouseupEvent);
 
                 expect(displayElement).not.toHaveClass('firefox-active');
             });
 
             it('on mouse out', () => {
-                const mouseoutEvent = new MouseEvent('mouseout');
+                const mouseoutEvent = new MouseEvent('mouseout', { bubbles: true });
 
-                minesweeperConfigurationElement.shadowRoot.dispatchEvent(mouseoutEvent);
+                displayElement.dispatchEvent(mouseoutEvent);
 
                 expect(displayElement).not.toHaveClass('firefox-active');
             });

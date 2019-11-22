@@ -55,50 +55,9 @@ export class MinesweeperBoardElement extends HTMLElement {
 
         this.board = this.shadowRoot.getElementById('board');
 
-        // reveal the selected tile and emit won or lost events the tile selected resulting in the player winning or losing the game
-        this.shadowRoot.addEventListener('tile-select', (e: CustomEvent) => {
-            const minesweeperTile: MinesweeperTileElement = <MinesweeperTileElement>e.target;
-            const lost = this.revealTiles(minesweeperTile);
-            if (lost) {
-                this.revealAllMines();
-                this.dispatchEvent(new CustomEvent('lost', { bubbles: true }));
-            } else if (this.isGameFinished()) {
-                this.flagAllMines();
-                this.dispatchEvent(new CustomEvent('won', { bubbles: true }));
-            }
-        });
-
-        // allow navigation through the board with arrow keys
-        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
-            const focusedElement = this.shadowRoot.activeElement;
-            if (focusedElement && focusedElement.constructor === MinesweeperTileElement) {
-                const focusedElementIndex = this.tiles.findIndex(t => t === focusedElement);
-                let row = Math.floor(focusedElementIndex / this.width);
-                let column = focusedElementIndex % this.width;
-
-                switch (e.key) {
-                    case 'ArrowUp':
-                        row = (this.height + row - 1) % this.height;
-                        break;
-                    case 'ArrowRight':
-                        column = (column + 1) % this.width;
-                        break;
-                    case 'ArrowDown':
-                        row = (row + 1) % this.height;
-                        break;
-                    case 'ArrowLeft':
-                        column = (this.width + column - 1) % this.width;
-                        break;
-                }
-
-                this.tiles[row * this.width + column].focus();
-            }
-        });
-
-        // prevent showing context menu if the user misflags a tile
-        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
-            e.preventDefault();
-        });
+        this.handleTileSelection();
+        this.handleBoardNavigationWithArrowKeys();
+        this.handlePreventingContextMenu();
     }
 
     /**
@@ -191,6 +150,66 @@ export class MinesweeperBoardElement extends HTMLElement {
         });
     }
 
+    /**
+     * Add event listeners for handling the navigating through the board using arrow keys
+     */
+    private handleBoardNavigationWithArrowKeys(): void {
+        // allow navigation through the board with arrow keys
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
+            const focusedElement = this.shadowRoot.activeElement;
+            if (focusedElement && focusedElement.constructor === MinesweeperTileElement) {
+                const focusedElementIndex = this.tiles.findIndex(t => t === focusedElement);
+                let row = Math.floor(focusedElementIndex / this.width);
+                let column = focusedElementIndex % this.width;
+
+                switch (e.key) {
+                    case 'ArrowUp':
+                        row = (this.height + row - 1) % this.height;
+                        break;
+                    case 'ArrowRight':
+                        column = (column + 1) % this.width;
+                        break;
+                    case 'ArrowDown':
+                        row = (row + 1) % this.height;
+                        break;
+                    case 'ArrowLeft':
+                        column = (this.width + column - 1) % this.width;
+                        break;
+                }
+
+                this.tiles[row * this.width + column].focus();
+            }
+        });
+    }
+
+    /**
+     * Add event listeners for preventing showing the context menu
+     */
+    private handlePreventingContextMenu(): void {
+        // prevent showing context menu if the user misflags a tile
+        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
+            e.preventDefault();
+        });
+    }
+
+
+    /**
+     * Add event listeners for handling tile selection
+     */
+    private handleTileSelection(): void {
+        // reveal the selected tile and emit won or lost events if the tile selected resulting in the player winning or losing the game
+        this.shadowRoot.addEventListener('tile-select', (e: CustomEvent) => {
+            const minesweeperTile: MinesweeperTileElement = <MinesweeperTileElement>e.target;
+            const lost = this.revealTiles(minesweeperTile);
+            if (lost) {
+                this.revealAllMines();
+                this.dispatchEvent(new CustomEvent('lost', { bubbles: true }));
+            } else if (this.isGameFinished()) {
+                this.flagAllMines();
+                this.dispatchEvent(new CustomEvent('won', { bubbles: true }));
+            }
+        });
+    }
     /**
      * Reveal all mines
      * 1. Disable all tiles
