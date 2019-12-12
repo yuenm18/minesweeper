@@ -42,7 +42,7 @@ export class ConfigurationStore {
             this.writeConfigurationsToLocalStorage(this.defaultConfigurations);
         }
 
-        return configurations || this.defaultConfigurations;
+        return configurations ?? this.defaultConfigurations;
     }
 
     /**
@@ -60,7 +60,7 @@ export class ConfigurationStore {
      * @param configuration The configuration to add or update
      */
     static addOrUpdateConfiguration(configuration: Configuration): void {
-        const configurations = this.getConfigurationsFromLocalStorage() || [];
+        const configurations = this.getConfigurationsFromLocalStorage() ?? [];
 
         const index = configurations.findIndex(c => c.id === configuration.id);
         if (index !== -1) {
@@ -77,7 +77,7 @@ export class ConfigurationStore {
      *
      * @returns The list of configurations stored in local storage or null if it doesn't exist
      */
-    private static getConfigurationsFromLocalStorage(): Array<Configuration> {
+    private static getConfigurationsFromLocalStorage(): Array<Configuration | null> {
         const configuration = localStorage.getItem(this.LOCAL_STORAGE_KEY);
         try {
             return (<Array<Configuration>>JSON.parse(configuration)).map(c => {
