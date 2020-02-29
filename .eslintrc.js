@@ -27,6 +27,7 @@ module.exports = {
         'dot-notation': ['error'],
         'eqeqeq': ['error'],
         'indent': ['error', 4, { 'SwitchCase': 1 }],
+        'linebreak-style': ['error'],
         'no-magic-numbers': ['error', { 'ignore': [-1, 0, 1] }],
         'no-multi-spaces': ['error'],
         'no-unused-vars': ['off'],

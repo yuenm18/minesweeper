@@ -5,7 +5,7 @@ node_js:
 addons:
   chrome: stable
 install:
-  - npm install
+  - npm ci
 script:
   - npm audit --production
   - npm run lint
