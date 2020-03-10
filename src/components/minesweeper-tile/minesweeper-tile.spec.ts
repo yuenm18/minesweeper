@@ -49,7 +49,7 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseDownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseDownEvent);
 
             expect(document.activeElement).not.toBe(minesweeperTileElement);
         });
@@ -74,7 +74,7 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseDownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseDownEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeTruthy();
         });
@@ -85,7 +85,7 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseOverEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOverEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeTruthy();
         });
@@ -96,7 +96,7 @@ describe('Minesweeper tile element', () => {
             boardElement.setAttribute('pressed', '');
             const mouseOutEvent = new MouseEvent('mouseout');
 
-            minesweeperTileElement.dispatchEvent(mouseOutEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOutEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
@@ -108,7 +108,7 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseOverEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOverEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
@@ -120,7 +120,7 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mousedownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mousedownEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
@@ -132,7 +132,7 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseOverEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOverEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
@@ -140,7 +140,7 @@ describe('Minesweeper tile element', () => {
         it('on mouse out when flagged', () => {
             minesweeperTileElement.flag();
             const mouseOutEvent = new MouseEvent('mouseout');
-            minesweeperTileElement.dispatchEvent(mouseOutEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseOutEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
@@ -152,7 +152,7 @@ describe('Minesweeper tile element', () => {
                 value: 1
             });
 
-            minesweeperTileElement.dispatchEvent(mouseDownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseDownEvent);
 
             expect(boardElement.hasAttribute('pressed')).toBeFalsy();
         });
@@ -175,7 +175,7 @@ describe('Minesweeper tile element', () => {
         it('on context menu', () => {
             const contextmenuEvent = new MouseEvent('contextmenu');
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeTruthy();
         });
@@ -183,7 +183,7 @@ describe('Minesweeper tile element', () => {
         it('when pressing "f" key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'f' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeTruthy();
         });
@@ -215,7 +215,7 @@ describe('Minesweeper tile element', () => {
             const tileFlagCallback = jasmine.createSpy('tileFlagCallback');
             minesweeperTileElement.addEventListener('tile-flag', tileFlagCallback);
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(tileFlagCallback).not.toHaveBeenCalled();
         });
@@ -252,7 +252,7 @@ describe('Minesweeper tile element', () => {
         it('on context menu', () => {
             const contextmenuEvent = new MouseEvent('contextmenu');
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeFalsy();
         });
@@ -260,7 +260,7 @@ describe('Minesweeper tile element', () => {
         it('when pressing "f" key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'f' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(minesweeperTileElement.isFlagged()).toBeFalsy();
         });
@@ -297,7 +297,7 @@ describe('Minesweeper tile element', () => {
             const tileUnflagCallback = jasmine.createSpy('tileUnflagCallback');
             minesweeperTileElement.addEventListener('tile-unflag', tileUnflagCallback);
 
-            minesweeperTileElement.dispatchEvent(contextmenuEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(contextmenuEvent);
 
             expect(tileUnflagCallback).not.toHaveBeenCalled();
         });
@@ -325,7 +325,7 @@ describe('Minesweeper tile element', () => {
             const mouseupEvent = new MouseEvent('mouseup');
             Object.defineProperty(mouseupEvent, 'which', { value: 1 });
 
-            minesweeperTileElement.dispatchEvent(mouseupEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseupEvent);
 
             expect(tileSelectCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, composed: true }));
         });
@@ -333,7 +333,7 @@ describe('Minesweeper tile element', () => {
         it('on space key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: ' ' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(tileSelectCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, composed: true }));
         });
@@ -341,7 +341,7 @@ describe('Minesweeper tile element', () => {
         it('on enter key', () => {
             const keydownEvent = new KeyboardEvent('keydown', { key: 'Enter' });
 
-            minesweeperTileElement.dispatchEvent(keydownEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(keydownEvent);
 
             expect(tileSelectCallback).toHaveBeenCalledWith(jasmine.objectContaining({ bubbles: true, composed: true }));
         });
@@ -360,7 +360,7 @@ describe('Minesweeper tile element', () => {
         it('when tile is disabled', () => {
             minesweeperTileElement.disable();
 
-            minesweeperTileElement.dispatchEvent(mouseUpEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseUpEvent);
 
             expect(tileSelectCallback).not.toHaveBeenCalled();
         });
@@ -368,7 +368,7 @@ describe('Minesweeper tile element', () => {
         it('when tile is flagged', () => {
             minesweeperTileElement.flag();
 
-            minesweeperTileElement.dispatchEvent(mouseUpEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseUpEvent);
 
             expect(tileSelectCallback).not.toHaveBeenCalled();
         });
@@ -377,7 +377,7 @@ describe('Minesweeper tile element', () => {
             const mouseupEvent = new MouseEvent('mouseup');
             Object.defineProperty(mouseupEvent, 'which', { value: 2 });
 
-            minesweeperTileElement.dispatchEvent(mouseupEvent);
+            minesweeperTileElement.shadowRoot.dispatchEvent(mouseupEvent);
 
             expect(tileSelectCallback).not.toHaveBeenCalled();
         });

@@ -19,7 +19,7 @@ template.innerHTML = `
     #display[pressed] {
         border: none;
     }
-    
+
     #display {
         box-sizing: border-box;
         display: flex;
@@ -239,12 +239,12 @@ export class MinesweeperTileElement extends HTMLElement {
      * Add event listeners for flagging the tile
      */
     private handleFlaggingTile(): void {
-        this.addEventListener('contextmenu', (e: MouseEvent) => {
+        this.shadowRoot.addEventListener('contextmenu', (e: MouseEvent) => {
             e.preventDefault();
             this.toggleFlag();
         });
 
-        this.addEventListener('keydown', (e: KeyboardEvent) => {
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
             switch (e.key) {
                 case 'f':
                     this.toggleFlag();
@@ -257,18 +257,18 @@ export class MinesweeperTileElement extends HTMLElement {
      * Add event listeners for press indicators on the tile
      */
     private handlingPressingTile(): void {
-        this.addEventListener('mousedown', (e: MouseEvent) => {
+        this.shadowRoot.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault(); // prevent focus on all mouse events
             if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
                 this.displayElement.setAttribute('pressed', '');
             }
         });
 
-        this.addEventListener('mouseout', (e: MouseEvent) => {
+        this.shadowRoot.addEventListener('mouseout', (e: MouseEvent) => {
             this.displayElement.removeAttribute('pressed');
         });
 
-        this.addEventListener('mouseover', (e: MouseEvent) => {
+        this.shadowRoot.addEventListener('mouseover', (e: MouseEvent) => {
             if (e.buttons === 1 && !this.disabled && !this.isFlagged()) {
                 this.displayElement.setAttribute('pressed', '');
             }
@@ -279,7 +279,7 @@ export class MinesweeperTileElement extends HTMLElement {
      * Add event listeners for selecting the tile
      */
     private handleSelectingTile(): void {
-        this.addEventListener('keydown', (e: KeyboardEvent) => {
+        this.shadowRoot.addEventListener('keydown', (e: KeyboardEvent) => {
             switch (e.key) {
                 case ' ':
                 case 'Enter':
@@ -288,7 +288,7 @@ export class MinesweeperTileElement extends HTMLElement {
             }
         });
 
-        this.addEventListener('mouseup', (e: MouseEvent) => {
+        this.shadowRoot.addEventListener('mouseup', (e: MouseEvent) => {
             if (e.which === 1) {
                 this.selectTile();
             }
