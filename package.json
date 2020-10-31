@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Minesweeper",
   "main": "main.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuenm18/minesweeper.git"
+  },
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
@@ -17,7 +21,7 @@
   "author": "Matthew Yuen",
   "license": "ISC",
   "devDependencies": {
-    "@lhci/cli": "0.3.2",
+    "@lhci/cli": "^0.6.0",
     "@types/jasmine": "3.4.6",
     "@typescript-eslint/eslint-plugin": "2.7.0",
     "@typescript-eslint/parser": "2.7.0",
@@ -30,7 +34,7 @@
     "html-webpack-template": "6.2.0",
     "istanbul-instrumenter-loader": "3.0.1",
     "jasmine-core": "3.5.0",
-    "karma": "4.4.1",
+    "karma": "5.2.3",
     "karma-chrome-launcher": "3.1.0",
     "karma-coverage-istanbul-reporter": "2.1.0",
     "karma-jasmine": "2.0.1",
@@ -41,13 +45,13 @@
     "mini-css-extract-plugin": "0.8.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "preload-webpack-plugin": "3.0.0-beta.4",
-    "serve": "11.2.0",
+    "serve": "11.3.2",
     "style-loader": "1.0.0",
     "ts-loader": "6.2.1",
     "typescript": "3.7.2",
     "webpack": "4.41.2",
     "webpack-cli": "3.3.10",
-    "webpack-dev-server": "3.9.0",
+    "webpack-dev-server": "3.11.0",
     "webpack-merge": "4.2.2",
     "webpack-pwa-manifest": "4.1.1",
     "workbox-webpack-plugin": "4.3.1"
