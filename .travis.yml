@@ -19,6 +19,7 @@ before_deploy:
   - rm .gitignore
 deploy:
   strategy: git
+  skip_cleanup: true
   local_dir: dist
   provider: pages
   token: $GITHUB_TOKEN
